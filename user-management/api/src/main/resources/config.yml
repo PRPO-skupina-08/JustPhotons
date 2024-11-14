@@ -1,0 +1,24 @@
+kumuluzee:
+  name: nakupovalni-seznami
+  version: 1.0.0
+  env:
+    name: dev
+  datasources:
+    - jndi-name: jdbc/NakupovalniSeznamiDS
+      connection-url: jdbc:postgresql://localhost:5432/nakupovalniseznami
+      username: postgres
+      password: postgres
+      max-pool-size: 20
+  health:
+    checks:
+      data-source-health-check:
+        type: liveness
+        jndi-name: jdbc/NakupovalniSeznamiDS
+  rest-client:
+    registrations:
+      - class: priporocilni-sistem-api
+        url: http://localhost:8081/v1
+        read-timeout: 5000
+integrations:
+  priporocilni-sistem:
+    base-url: http://localhost:8081/v1
