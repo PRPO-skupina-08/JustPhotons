@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>si.fri.prpo.nakupovanje</groupId>
-    <artifactId>nakupovalni-seznami</artifactId>
+    <groupId>si.justphotons</groupId>
+    <artifactId>user-management</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-
     <packaging>pom</packaging>
 
     <modules>
         <module>api</module>
-        <module>storitve</module>
-        <module>entitete</module>
+        <module>services</module>
+        <module>entities</module>
     </modules>
 
-    <name>Nakupovalni seznami</name>
-    <description>Storitev za delo z nakupovalnimi seznami.</description>
+    <name>Just Photons</name>
+    <description>Microservice for user management in Just Photons app.</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -25,9 +23,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <kumuluzee.version>4.1.0</kumuluzee.version>
+        <kumuluzee-rest.version>1.5.1</kumuluzee-rest.version>
+        <kumuluzee.version>4.1.0</kumuluzee.version>
         <kumuluzee-config-mp.version>2.0.0</kumuluzee-config-mp.version>
         <kumuluzee-openapi-mp.version>1.4.0</kumuluzee-openapi-mp.version>
-        <kumuluzee-rest.version>1.5.1</kumuluzee-rest.version>
         <kumuluzee-cors.version>2.0.0</kumuluzee-cors.version>
         <kumuluzee-security.version>1.2.0</kumuluzee-security.version>
         <kumuluzee-health.version>2.4.4</kumuluzee-health.version>
@@ -46,6 +45,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>com.kumuluz.ee.config</groupId>
                 <artifactId>kumuluzee-config-mp</artifactId>
@@ -99,18 +99,18 @@
             </dependency>
 
             <dependency>
-                <groupId>si.fri.prpo.nakupovanje</groupId>
+                <groupId>si.justphotons</groupId>
                 <artifactId>api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>si.fri.prpo.nakupovanje</groupId>
-                <artifactId>storitve</artifactId>
+                <groupId>si.justphotons</groupId>
+                <artifactId>services</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>si.fri.prpo.nakupovanje</groupId>
-                <artifactId>entitete</artifactId>
+                <groupId>si.justphotons</groupId>
+                <artifactId>entities</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

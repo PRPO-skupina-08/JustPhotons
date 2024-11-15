@@ -1,11 +1,11 @@
 kumuluzee:
-  name: nakupovalni-seznami
+  name: just-photons
   version: 1.0.0
   env:
     name: dev
   datasources:
-    - jndi-name: jdbc/NakupovalniSeznamiDS
-      connection-url: jdbc:postgresql://localhost:5432/nakupovalniseznami
+    - jndi-name: jdbc/JustPhotonsDS
+      connection-url: jdbc:postgresql://localhost:5432/justphotons
       username: postgres
       password: postgres
       max-pool-size: 20
@@ -13,7 +13,7 @@ kumuluzee:
     checks:
       data-source-health-check:
         type: liveness
-        jndi-name: jdbc/NakupovalniSeznamiDS
+        jndi-name: jdbc/JustPhotonsDS
   rest-client:
     registrations:
       - class: priporocilni-sistem-api

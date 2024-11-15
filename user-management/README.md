@@ -1,6 +1,20 @@
-# Nakupovalni seznami 
+# User management microservice
 
-Skeletni projekt za predmet PRPO.
+Ta microservice bo upravljal s uporabniki naše spletne platforme. 
+Implementira sledeče API dostopne točke:
+1. `/users`: 
+   - `GET` - vrne vse podatke o vseh uporabnikih
+   - `POST` - doda uporabnika. V polju morajo biti prisotni sledeči podatki:
+     ```json
+     {
+      "username": string,
+     }
+     ```
+2. `/users/{id}`
+   - `GET` - vrne uporabnika (`200`) s podanim `id` ali vrne kodo `404`
+   - `DELETE` - izbriše uporabnika (`204`) s podanim `id` ali vrne kodo `404`
+   - `PUT` - posodobi uporabnika s podanim
+
 
 ## Predpogoji
 
