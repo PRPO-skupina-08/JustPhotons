@@ -46,6 +46,7 @@ public class UsersResource {
     @Inject
     private UsersBean uporabnikiZrno;
 
+    // tale openAPI dela na /openapi (raw yaml) in na /api-specs/ui (za lep prikaz)
     @Operation(description = "Vrne seznam uporabnikov.", summary = "Seznam uporabnikov")
     @APIResponses({
             @APIResponse(responseCode = "200",
@@ -53,7 +54,6 @@ public class UsersResource {
                     content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.ARRAY)),
                     headers = {@Header(name = "X-Total-Count", description = "Število vrnjenih uporabnikov")}
             )})
-    @RolesAllowed("user")
     @GET
     public Response getUsers() {
         List<User> allUsers = uporabnikiZrno.getUsers();
@@ -61,6 +61,14 @@ public class UsersResource {
         return Response.ok(allUsers).header("X-Total_count", userCount).build();
     }
 
+    @Operation(description = "Omogoča dodajanje uporabnika.", summary = "Dodajanje uporabnika.")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Seznam uporabnikov",
+                    content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.ARRAY)),
+                    headers = {@Header(name = "X-Total-Count", description = "Število vrnjenih uporabnikov")}
+            )})
+    // TODO: add @RequestBody anotation + @Content, @Schema in potem lahko uporabiš DTO
     @POST
     public Response addUser(User uporabnik) {
         uporabnikiZrno.addUser(uporabnik);
@@ -77,11 +85,28 @@ public class UsersResource {
     }
 
     @DELETE
-    @Path("{id_uporabnika}")
-    public Response deleteUser(@PathParam("id_uporabnika") Integer id_uporabnika) {
-        boolean succ = uporabnikiZrno.deleteUser(id_uporabnika);
+    @Path("{userId}")
+    public Response deleteUser(@PathParam("userId") Integer userId) {
+        boolean succ = uporabnikiZrno.deleteUser(userId);
         return succ
-            ? Response.ok(id_uporabnika).build()
+            ? Response.ok(userId).build()
             : Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @PUT
+    @Path("{userId}")
+    public Response updateUser(@PathParam("userId") Integer userId, User user) {
+        User u = uporabnikiZrno.updateUser(userId, user);
+        if (u == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            // TODO: to ne bo čist res, k mi ne dela tko BEAN
+            if (u.getId() != null) {
+                return Response.ok(u).build();
+            } else {
+                return Response.status(Response.Status.NOT_MODIFIED).build();
+            }
+        }
+
     }
 }

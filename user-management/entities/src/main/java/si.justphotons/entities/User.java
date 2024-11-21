@@ -5,13 +5,13 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "uporabnik")
+@Entity(name = "user")
+@Table(name = "users")
 @NamedQueries(value =
         {
-                @NamedQuery(name = "User.getAll", query = "SELECT u FROM Uporabnik u"),
+                @NamedQuery(name = "User.getAll", query = "SELECT u FROM user u"),
                 @NamedQuery(name = "User.getByUporabniskoIme",
-                        query = "SELECT u FROM Uporabnik u WHERE u.uporabniskoIme = :uporabniskoIme")
+                        query = "SELECT u FROM user u WHERE u.uporabniskoIme = :uporabniskoIme")
         })
 public class User {
 
@@ -19,22 +19,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uporabnisko_ime")
+    @Column(name = "username")
     private String uporabniskoIme;
 
+    @Column(name = "email")
     private String email;
-
-    @JsonbTransient
-    @OneToMany(mappedBy = "uporabnik", cascade = CascadeType.ALL)
 
     public Integer getId() {
         return id;
     }
 
-    // TODO: Tega pol ne bo tle več
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public void setId(Integer id) { this.id = id; }
 
     public String getUporabniskoIme() {
         return uporabniskoIme;

@@ -4,11 +4,14 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.ws.rs.NotFoundException;
+
 
 import com.kumuluz.ee.rest.beans.QueryParameters;
 //import com.kumuluz.ee.rest.utils.JPAUtils;
@@ -29,23 +32,19 @@ public class UsersBean {
         users = new ArrayList<User>();
         currentId = 0;
 
-        User user1 = new User();
-        user1.setId(currentId++);
-        user1.setUporabniskoIme("Janez");
-        user1.setEmail("janez.novak42@gmail.com");
-        User user2 = new User();
-        user2.setId(currentId++);
-        user2.setUporabniskoIme("Marija");
-        user2.setEmail("maria.novakus.neki@yahoo.com");
-        User user3 = new User();
-        user3.setId(currentId++);
-        user3.setUporabniskoIme("Kristina");
-        user3.setEmail("kristjanska.dusa@amen.com");
-        users.add(user1);
-        users.add(user2);
-        users.add(user3);
-
-
+//        User user1 = new User();
+//        user1.setUporabniskoIme("Janez");
+//        user1.setEmail("janez.novak42@gmail.com");
+//        User user2 = new User();
+//        user2.setUporabniskoIme("Marija");
+//        user2.setEmail("maria.novakus.neki@yahoo.com");
+//        User user3 = new User();
+//        user3.setUporabniskoIme("Kristina");
+//        user3.setEmail("kristjanska.dusa@amen.com");
+//
+//        em.persist(user1);
+//        em.persist(user2);
+//        em.persist(user3);
     }
 
     @PreDestroy
@@ -61,7 +60,8 @@ public class UsersBean {
     private EntityManager em;
 
     public List<User> getUsers() {
-        return users;
+        Query query = em.createNamedQuery("User.getAll", User.class);
+        return query.getResultList();
     }
 
     // QueryParameters pomaga, da lahko direkt iz URLja daš paramtere v query
@@ -76,7 +76,7 @@ public class UsersBean {
         // TODO: query shoudn't be null -
         // -> querying count with parameters
 
-        return (long) users.size();
+        return (long) 42;
 
     }
 
@@ -89,11 +89,9 @@ public class UsersBean {
 
     public User getUser(int uporabnikId) {
 
-        User user = null;
-        for (User userTmp : users) {
-            if (userTmp.getId().equals(uporabnikId)) {
-                user = userTmp;
-            }
+        User user = em.find(User.class, uporabnikId);
+        if (user == null) {
+            throw new NotFoundException();
         }
         return user;
     }
@@ -101,32 +99,31 @@ public class UsersBean {
     @Transactional
     public User addUser(User user) {
 
-        user.setId(currentId++);
-        users.add(user);
+        em.persist(user);
         return user;
     }
 
     @Transactional
     public User updateUser(int userId, User user) {
 
-        // TODO: kako zgleda update? A tkole?
-        deleteUser(userId);
-        user.setId(userId);
-        addUser(user);
+        User u = em.find(User.class, userId);
+        if (u == null) {
+            return null;
+        }
+        user.setId(u.getId());
+        user = em.merge(user);
+
         return user;
 
     }
 
     @Transactional
-    public boolean deleteUser(int uporabnikId) {
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getId().equals(uporabnikId)) {
-                users.remove(i);
-                return true;
-            }
-        }
+    public boolean deleteUser(int userId) {
+        User u = em.find(User.class, userId);
+        if (u != null) {
+            em.remove(u);
+        } else return false;
 
-        return false;
-
+        return true;
     }
 }
