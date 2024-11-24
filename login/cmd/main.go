@@ -20,11 +20,9 @@ func main() {
 		AllowNativePasswords: true,
 		ParseTime:            true,
 	})
-
     if err != nil {
         log.Fatal(err)
     }
-
     initStorage(db)
 
 	server := api.NewAPIServer(":8080", db)

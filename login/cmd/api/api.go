@@ -27,7 +27,7 @@ func (server *APIServer) Run() error {
 
 	userStore := user.NewStore(server.db)
 	userHandler := user.NewHandler(userStore)
-	userHandler.RegisterRoutes(subrouter)
+	userHandler.CreateRoutes(subrouter)
 
 	log.Println("Listening on", server.addr)
 
