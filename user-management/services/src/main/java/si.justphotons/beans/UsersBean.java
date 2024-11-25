@@ -14,7 +14,7 @@ import javax.ws.rs.NotFoundException;
 
 
 import com.kumuluz.ee.rest.beans.QueryParameters;
-//import com.kumuluz.ee.rest.utils.JPAUtils;
+import com.kumuluz.ee.rest.utils.JPAUtils;
 
 import si.justphotons.entities.User;
 
@@ -28,30 +28,11 @@ public class UsersBean {
     @PostConstruct
     private void init() {
         log.info("Inicializacija zrna " + UsersBean.class.getSimpleName());
-
-        users = new ArrayList<User>();
-        currentId = 0;
-
-//        User user1 = new User();
-//        user1.setUporabniskoIme("Janez");
-//        user1.setEmail("janez.novak42@gmail.com");
-//        User user2 = new User();
-//        user2.setUporabniskoIme("Marija");
-//        user2.setEmail("maria.novakus.neki@yahoo.com");
-//        User user3 = new User();
-//        user3.setUporabniskoIme("Kristina");
-//        user3.setEmail("kristjanska.dusa@amen.com");
-//
-//        em.persist(user1);
-//        em.persist(user2);
-//        em.persist(user3);
     }
 
     @PreDestroy
     private void destroy() {
         log.info("Deinicializacija zrna " + UsersBean.class.getSimpleName());
-
-        // TODO: a je treba tukaj dealocirat ArrayList?
         // zapiranje virov
     }
 
@@ -64,20 +45,23 @@ public class UsersBean {
         return query.getResultList();
     }
 
-    // QueryParameters pomaga, da lahko direkt iz URLja daš paramtere v query
-//    public List<User> getUsers(QueryParameters query) {
-//        TODO: ko bo baza
-//        return null;
-//
-//    }
+    // QueryParameters pomaga, da lahko direkt iz URLja daš paramtere v query (oblike offset=n&limit=m)
+    // for using filters: https://github.com/kumuluz/kumuluzee-rest
+    public List<User> getUsers(QueryParameters query) {
+        List<User> users = JPAUtils.queryEntities(em, User.class, query);
+        return users;
+    }
 
     public Long getUsersCount(QueryParameters query) {
-        
-        // TODO: query shoudn't be null -
-        // -> querying count with parameters
 
-        return (long) 42;
+        Long count;
+        if (query == null) {
+            count = JPAUtils.queryEntitiesCount(em, User.class);
+        } else {
+            count = JPAUtils.queryEntitiesCount(em, User.class, query);
+        }
 
+        return count;
     }
 
 //    public List<User> getUsersCriteriaAPI() {

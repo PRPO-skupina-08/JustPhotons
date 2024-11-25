@@ -52,8 +52,9 @@ public class UsersResource {
             @APIResponse(responseCode = "200",
                     description = "Seznam uporabnikov",
                     content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.ARRAY)),
-                    headers = {@Header(name = "X-Total-Count", description = "Število vrnjenih uporabnikov")}
-            )})
+                    headers = {@Header(name = "X-Total-Count", description = "Število vseh uporabnikov")}
+            )
+    })
     @GET
     public Response getUsers() {
         List<User> allUsers = uporabnikiZrno.getUsers();
@@ -61,18 +62,37 @@ public class UsersResource {
         return Response.ok(allUsers).header("X-Total_count", userCount).build();
     }
 
+    @GET
+    @Path("/filtered")
+    public Response getUsersFiltered() {
+        QueryParameters query = QueryParameters.query(uriInfo.getRequestUri().getQuery()).build();
+        List<User> users = uporabnikiZrno.getUsers(query);
+        Long userCount = uporabnikiZrno.getUsersCount(query);
+        return Response.ok(users).header("X-Total_count", userCount).build();
+    }
+
+
     @Operation(description = "Omogoča dodajanje uporabnika.", summary = "Dodajanje uporabnika.")
     @APIResponses({
-            @APIResponse(responseCode = "200",
-                    description = "Seznam uporabnikov",
+            @APIResponse(responseCode = "201",
+                    description = "Uporabnik ustvarjen",
                     content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.ARRAY)),
-                    headers = {@Header(name = "X-Total-Count", description = "Število vrnjenih uporabnikov")}
-            )})
-    // TODO: add @RequestBody anotation + @Content, @Schema in potem lahko uporabiš DTO
+                    headers = {}
+            ),
+            @APIResponse(responseCode = "400",
+                    description = "Podatki v telesu zahtevka niso ustrezne oblike",
+                    content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.ARRAY)),
+                    headers = {}
+            )
+    })
+    // TODO: add @RequestBody anotation + @Content, @Schema in potem lahko uporabiš DTO => vračaš tudi 400
     @POST
     public Response addUser(User uporabnik) {
-        uporabnikiZrno.addUser(uporabnik);
-        return Response.noContent().build();
+        User u = uporabnikiZrno.addUser(uporabnik);
+//        if (DTO ni šel čez) {
+//            return Response.status(Response.Status.BAD_REQUEST).build();
+//        }
+        return Response.status(Response.Status.CREATED).entity(u).build();
     }
 
     @GET
@@ -93,6 +113,7 @@ public class UsersResource {
             : Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    // TODO: add @RequestBody anotation + @Content, @Schema in potem lahko uporabiš DTO
     @PUT
     @Path("{userId}")
     public Response updateUser(@PathParam("userId") Integer userId, User user) {
