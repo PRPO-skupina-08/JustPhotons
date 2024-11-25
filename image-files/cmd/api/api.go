@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image-service/internal/store"
 	"log"
 	"net/http"
 	"time"
@@ -11,10 +12,19 @@ import (
 
 type application struct {
 	config config
+	store  store.Storage
 }
 
 type config struct {
 	addr string
+	db   dbConfig
+}
+
+type dbConfig struct {
+	address            string
+	maxOpenConnections int
+	maxIdleConnections int
+	maxIdleTime        string
 }
 
 func (app *application) mount() http.Handler {
