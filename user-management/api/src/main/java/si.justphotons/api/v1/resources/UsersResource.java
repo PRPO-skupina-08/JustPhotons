@@ -30,14 +30,18 @@ import com.kumuluz.ee.rest.beans.QueryParameters;
 
 import si.justphotons.entities.User;
 import si.justphotons.beans.UsersBean;
+import si.justphotons.dtos.UserCreateDTO;
+
+import javax.validation.Valid; // To trigger validation for objects or collections
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
-    //@Secure
-    @ApplicationScoped
-    @Path("users")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+//@Secure
+@ApplicationScoped
+@Path("users")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class UsersResource {
 
     @Context
@@ -62,6 +66,14 @@ public class UsersResource {
         return Response.ok(allUsers).header("X-Total_count", userCount).build();
     }
 
+    @Operation(description = "Vrne seznam uporabnikov glede na podani filter. Možne filtre lahko najdemo tukaj: https://github.com/kumuluz/kumuluzee-rest", summary = "Seznam uporabnikov glede na filter")
+    @APIResponses({
+            @APIResponse(responseCode = "200",
+                    description = "Seznam uporabnikov",
+                    content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.ARRAY)),
+                    headers = {@Header(name = "X-Total-Count", description = "Število vseh uporabnikov glede na filter")}
+            )
+    })
     @GET
     @Path("/filtered")
     public Response getUsersFiltered() {
@@ -72,26 +84,30 @@ public class UsersResource {
     }
 
 
+
     @Operation(description = "Omogoča dodajanje uporabnika.", summary = "Dodajanje uporabnika.")
     @APIResponses({
             @APIResponse(responseCode = "201",
                     description = "Uporabnik ustvarjen",
-                    content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.ARRAY)),
-                    headers = {}
+                    content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.OBJECT))
             ),
             @APIResponse(responseCode = "400",
-                    description = "Podatki v telesu zahtevka niso ustrezne oblike",
-                    content = @Content(schema = @Schema(implementation = User.class, type = SchemaType.ARRAY)),
-                    headers = {}
+                    description = "Podatki v telesu zahtevka niso ustrezne oblike"
             )
     })
-    // TODO: add @RequestBody anotation + @Content, @Schema in potem lahko uporabiš DTO => vračaš tudi 400
+//    @RequestBody(
+//            description = "User creation payload",
+//            required = true,
+//            content = @Content(
+//                    mediaType = "application/json",
+//                    schema = @Schema(implementation = UserCreateDTO.class, type = SchemaType=OBJECT)
+//            )
+//    )
     @POST
-    public Response addUser(User uporabnik) {
-        User u = uporabnikiZrno.addUser(uporabnik);
-//        if (DTO ni šel čez) {
-//            return Response.status(Response.Status.BAD_REQUEST).build();
-//        }
+    public Response addUser(@Valid UserCreateDTO userCreateDTO) {
+
+        User user = convertToEntity(userCreateDTO);
+        User u = uporabnikiZrno.addUser(user);
         return Response.status(Response.Status.CREATED).entity(u).build();
     }
 
@@ -116,7 +132,8 @@ public class UsersResource {
     // TODO: add @RequestBody anotation + @Content, @Schema in potem lahko uporabiš DTO
     @PUT
     @Path("{userId}")
-    public Response updateUser(@PathParam("userId") Integer userId, User user) {
+    public Response updateUser(@PathParam("userId") Integer userId, @Valid UserCreateDTO userCreateDTO) {
+        User user = convertToEntity(userCreateDTO);
         User u = uporabnikiZrno.updateUser(userId, user);
         if (u == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -129,5 +146,20 @@ public class UsersResource {
             }
         }
 
+    }
+
+
+    /*
+        DTO conversion methods:
+    */
+
+    @Inject
+    private ModelMapper mapper;
+
+    public User convertToEntity(UserCreateDTO dto) {
+        return mapper.map(dto, User.class);
+    }
+    public UserCreateDTO convertToDTO(User user) {
+        return mapper.map(user, UserCreateDTO.class);
     }
 }

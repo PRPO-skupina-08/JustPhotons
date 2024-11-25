@@ -1,7 +1,7 @@
 # User management microservice
 
 Ta microservice bo upravljal s uporabniki naše spletne platforme. 
-Implementira sledeče API dostopne točke:
+Implementira sledeče API dostopne točke (actually you better look into OpenAPI :):
 1. `/users`: 
    - `GET` - vrne vse podatke o vseh uporabnikih (200)
    - `POST` - doda uporabnika. V polju morajo biti prisotni sledeči podatki:
@@ -19,6 +19,13 @@ Implementira sledeče API dostopne točke:
 3. `/users/filtered`
    - na tem endpointu se lahko pridobi uporabnike filtrirane/sortirane po kriterijih, ki so objavljeni tukaj: https://github.com/kumuluz/kumuluzee-rest
    - metoda vrača `200` in upornike, ki ustrezajo kriterijem
+
+# Entitete
+
+Entity users ima naslednje atribute:
+- id
+- email
+- username
 
 ## Zagon baze
 

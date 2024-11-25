@@ -37,6 +37,19 @@
 <!--            <groupId>org.keycloak</groupId>-->
 <!--            <artifactId>keycloak-jetty94-adapter</artifactId>-->
 <!--        </dependency>-->
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-el-uel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-bean-validation-hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.1.1</version>
+        </dependency>
 
         <dependency>
             <groupId>si.justphotons</groupId>

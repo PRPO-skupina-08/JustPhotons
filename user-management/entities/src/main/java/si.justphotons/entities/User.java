@@ -10,8 +10,8 @@ import java.util.List;
 @NamedQueries(value =
         {
                 @NamedQuery(name = "User.getAll", query = "SELECT u FROM user u"),
-                @NamedQuery(name = "User.getByUporabniskoIme",
-                        query = "SELECT u FROM user u WHERE u.uporabniskoIme = :uporabniskoIme")
+                @NamedQuery(name = "User.getByUsername",
+                        query = "SELECT u FROM user u WHERE u.username = :uporabniskoIme")
         })
 public class User {
 
@@ -20,7 +20,7 @@ public class User {
     private Integer id;
 
     @Column(name = "username")
-    private String uporabniskoIme;
+    private String username;
 
     @Column(name = "email")
     private String email;
@@ -31,12 +31,12 @@ public class User {
 
     public void setId(Integer id) { this.id = id; }
 
-    public String getUporabniskoIme() {
-        return uporabniskoIme;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUporabniskoIme(String uporabniskoIme) {
-        this.uporabniskoIme = uporabniskoIme;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -51,7 +51,7 @@ public class User {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("<br/>Uporabnisko ime: ");
-        sb.append(this.uporabniskoIme);
+        sb.append(this.username);
         sb.append("<br/>Email: ");
         sb.append(this.email);
         return sb.toString();
