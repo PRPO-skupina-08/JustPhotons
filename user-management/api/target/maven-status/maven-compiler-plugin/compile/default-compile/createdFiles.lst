@@ -1,5 +1,0 @@
-si\justphotons\api\v1\resources\UsersResource.class
-si\justphotons\api\v1\JustPhotonsApplication.class
-si\justphotons\api\v1\dtos\UserCreateDTO.class
-META-INF\services\javax.ws.rs.core.Application
-si\justphotons\servlets\JPAServlet.class
