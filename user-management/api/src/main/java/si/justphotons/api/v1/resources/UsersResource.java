@@ -144,13 +144,7 @@ public class UsersResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if (dto != null) {
-            return Response.ok(dto).build();
-        } else {
-            return Response.status(Response.Status.NOT_MODIFIED).build();
-        }
-
-
+        return Response.ok(dto).build();
     }
 
 

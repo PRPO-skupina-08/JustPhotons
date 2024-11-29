@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.ws.rs.NotFoundException;
 
-import org.modelmapper.ModelMapper;
-
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.utils.JPAUtils;
 
@@ -100,17 +98,11 @@ public class UsersBean {
     public UserSendDTO updateUser(int userId, User user) {
 
         User u = em.find(User.class, userId);
-        em.detach(u); // ker drugače ga po persistal in spreminjal pri merge ...
         if (u == null) {
             throw new NotFoundException();
         }
         user.setId(u.getId());
         User newUser = em.merge(user);
-
-        if (newUser.equals(u)) {
-            return null;
-            // toj za to, da lahko API pošlje 304 Not Modified
-        }
 
         return convertToDTO(newUser);
     }
