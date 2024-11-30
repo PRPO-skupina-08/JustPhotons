@@ -5,14 +5,10 @@ import (
 	"image-service/internal/env"
 	"image-service/internal/store"
 	"log"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+    env.InitEnv()
 
 	cfg := config{
 		addr: env.GetString("ADDR", ":8080"),

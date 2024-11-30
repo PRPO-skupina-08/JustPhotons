@@ -1,9 +1,19 @@
 package env
 
 import (
+	"log"
 	"os"
 	"strconv"
+
+	"github.com/joho/godotenv"
 )
+
+func InitEnv() {
+    // Load ENV
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
 
 func GetString(key, fallback string) string {
     val, ok := os.LookupEnv(key)
