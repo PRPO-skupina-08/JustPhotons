@@ -1,62 +1,40 @@
-package main
+package api
 
 import (
-	"image-service/internal/store"
 	"log"
 	"net/http"
-	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
+	"github.com/gorilla/mux"
 )
 
-type application struct {
-	config config
-	store  store.Storage
-}
-
-type config struct {
+type APIServer struct {
 	addr string
-	db   dbConfig
 }
 
-type dbConfig struct {
-	address            string
-	maxOpenConnections int
-	maxIdleConnections int
-	maxIdleTime        string
+func NewAPIServer(addr string) *APIServer {
+	return &APIServer{
+		addr: addr,
+	}
 }
 
-func (app *application) mount() http.Handler {
-	r := chi.NewRouter()
+// Runs the API server
+func (s *APIServer) Run() error {
+	// Creates router
+	router := mux.NewRouter()
 
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.Logger)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.RequestID)
+	// Register / add endpoints (services), controller == handler
 
-	// Set a timeout value on the request context (ctx), that will signal
-	// through ctx.Done() that the request has timed out and further
-	// processing should be stopped.
-	r.Use(middleware.Timeout(60 * time.Second))
-
-	r.Route("/v1", func(r chi.Router) {
-		r.Get("/health", app.healthCheckHandler)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedMethods:   []string{"GET", "POST", "DELETE"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowCredentials: true,
 	})
 
-	return r
-}
+	corsHandler := c.Handler(router)
 
-func (app *application) run(mux http.Handler) error {
-	srv := &http.Server{
-		Addr:         app.config.addr,
-		Handler:      mux,
-		WriteTimeout: time.Second * 30, // Write should be more than read
-		ReadTimeout:  time.Second * 10, // Read should be less than write
-		IdleTimeout:  time.Minute,
-	}
+	log.Printf("API server listening on port %s", s.addr)
 
-	log.Printf("Server has started at %s", app.config.addr)
-
-	return srv.ListenAndServe()
+	return http.ListenAndServe(s.addr, corsHandler)
 }
