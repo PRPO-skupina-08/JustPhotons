@@ -7,8 +7,5 @@ build: dependencies
 test:
 	@go test -v ./...
 
-get:
-	@go get ./...
-
 run: build
 	./bin/ecom
