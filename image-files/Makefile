@@ -1,4 +1,7 @@
-build:
+dependencies:
+	@go mod tidy
+
+build: dependencies
 	@go build -o bin/ecom cmd/main.go
 
 test:
