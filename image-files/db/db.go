@@ -1,12 +1,15 @@
 package db
 
 import (
+	"image-service/config"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 // dsn = data source name
-func NewMariaDB(dsn string) (*gorm.DB, error) {
+func NewMariaDB() (*gorm.DB, error) {
+	dsn := config.GetDSN() // get the data source name
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
