@@ -13,4 +13,12 @@
 	<name>services</name>
 	<description>Buissness logic module for Just Photons app</description>
 
+    <dependencies>
+        <dependency>
+			<groupId>si.justphotons</groupId>
+			<artifactId>entities</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+    </dependencies>
+
 </project>

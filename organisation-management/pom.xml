@@ -29,6 +29,7 @@
     <modules>
         <module>api</module>
         <module>services</module>
+        <module>entities</module>
     </modules>
 
 </project>
