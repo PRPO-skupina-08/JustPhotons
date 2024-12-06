@@ -1,7 +1,9 @@
 package si.justphotons.organisations.api.v1;
 
+import si.justphotons.organisations.entities.Album;
 import si.justphotons.organisations.entities.Organisation;
 import si.justphotons.organisations.services.beans.OrganisationsBean;
+import si.justphotons.organisations.services.beans.AlbumsBean;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 import java.util.List;
 
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -25,9 +28,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class OrganisationsResource {
 
 	private final OrganisationsBean organisationsBean;
+	private final AlbumsBean albumsBean;
 
-	public OrganisationsResource(OrganisationsBean organisationsBean) {
+	public OrganisationsResource(OrganisationsBean organisationsBean, AlbumsBean albumsBean) {
 		this.organisationsBean = organisationsBean;
+		this.albumsBean = albumsBean;
 	}
 
 	@GetMapping
@@ -69,6 +74,26 @@ public class OrganisationsResource {
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+
+	@GetMapping("/{orgId}/albums")
+	public ResponseEntity<List<Album>> getAlbums(@PathVariable Long orgId) {
+		List<Album> albums = albumsBean.getAlbums(orgId);
+		if (albums == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(albums, HttpStatus.OK);
+	}
+
+	@PostMapping("/{orgId}/albums")
+	public ResponseEntity<Album> postOne(@PathVariable Long orgId, @RequestBody Album album) {
+		Album al = albumsBean.insertAlbum(orgId, album);
+		if (al == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(al, HttpStatus.CREATED);
+	}
+	
+	
 	
 
 }

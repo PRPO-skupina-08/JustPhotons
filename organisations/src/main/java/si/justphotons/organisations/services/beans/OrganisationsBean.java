@@ -40,6 +40,7 @@ public class OrganisationsBean {
       o.setId(id);
       o.setDescription(org.getDescription());
       o.setName(org.getName());
+      o.setAlbums(org.getAlbums());
       organisationsRepository.save(o);
       return true;
     }

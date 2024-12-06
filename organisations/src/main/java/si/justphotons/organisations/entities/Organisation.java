@@ -1,9 +1,13 @@
 package si.justphotons.organisations.entities;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,14 +19,11 @@ public class Organisation {
     private Long id;
     private String name;
     private String description;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation")
+    private List<Album> albums;
     
     public  Organisation() {}
-
-    public Organisation(Long id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
 
     public Long getId() {
         return id;
@@ -48,8 +49,11 @@ public class Organisation {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "Organisation [id=" + id + ", name=" + name + ", description=" + description + "]";
+    public List<Album> getAlbums() {
+        return albums;
+    }
+
+    public void setAlbums(List<Album> albums) {
+        this.albums = albums;
     }
 }
