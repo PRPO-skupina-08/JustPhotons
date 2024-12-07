@@ -21,7 +21,7 @@ public class AlbumsBean {
         this.albumsRepository = a;
     }
 
-    public List<Album> getAlbums(Long orgId) {
+    public List<Album> getAll(Long orgId) {
         Optional<Organisation> orgOptional = organisationsRepository.findById(orgId);
         if (orgOptional.isPresent()) {
             Organisation org = orgOptional.get();
@@ -31,7 +31,7 @@ public class AlbumsBean {
     } 
 
     @Transactional
-    public Album insertAlbum(Long orgId, Album album) {
+    public Album insertOne(Long orgId, Album album) {
         Optional<Organisation> orgOptional = organisationsRepository.findById(orgId);
         if (orgOptional.isPresent()) {
             Organisation org = orgOptional.get();
@@ -40,5 +40,13 @@ public class AlbumsBean {
             return al;
         }
         return null;
-    } 
+    }
+
+    public Album getOne(Long orgId, Long albumId) {
+        List<Album> albums = albumsRepository.getByOrganisationId(orgId);
+        return albums.stream()
+            .filter(album -> album.getId().equals(albumId))
+            .findFirst()
+            .orElse(null);
+    }
 }

@@ -18,10 +18,6 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-
-
 
 @RestController
 @RequestMapping("/organisations")
@@ -77,7 +73,7 @@ public class OrganisationsResource {
 
 	@GetMapping("/{orgId}/albums")
 	public ResponseEntity<List<Album>> getAlbums(@PathVariable Long orgId) {
-		List<Album> albums = albumsBean.getAlbums(orgId);
+		List<Album> albums = albumsBean.getAll(orgId);
 		if (albums == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -86,14 +82,21 @@ public class OrganisationsResource {
 
 	@PostMapping("/{orgId}/albums")
 	public ResponseEntity<Album> postOne(@PathVariable Long orgId, @RequestBody Album album) {
-		Album al = albumsBean.insertAlbum(orgId, album);
+		Album al = albumsBean.insertOne(orgId, album);
 		if (al == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(al, HttpStatus.CREATED);
 	}
-	
-	
-	
+
+	@GetMapping("/{orgId}/albums/{albumId}")
+	public ResponseEntity<Album> postOne(@PathVariable Long orgId, @PathVariable Long albumId) {
+
+		Album al = albumsBean.getOne(orgId, albumId);
+		if (al == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(al, HttpStatus.OK);
+	}
 
 }
