@@ -49,4 +49,27 @@ public class AlbumsBean {
             .findFirst()
             .orElse(null);
     }
+
+    public Album updateOne(Long orgId, Long albumId, Album newAlbum) {
+        List<Album> albums = albumsRepository.getByOrganisationId(orgId);
+        Optional<Album> albumOptional = albums.stream().filter(album -> album.getId().equals(albumId)).findFirst();
+        if (albumOptional.isPresent()) {
+            Album oldAlbum = albumOptional.get();
+            oldAlbum.setName(newAlbum.getName());
+            Album alb = albumsRepository.save(oldAlbum);
+            return alb;
+        }
+        return null;
+    }
+
+    public boolean removeOne(Long orgId, Long albumId) {
+        List<Album> albums = albumsRepository.getByOrganisationId(orgId);
+        Optional<Album> albumOptional = albums.stream().filter(album -> album.getId().equals(albumId)).findFirst();
+        if (albumOptional.isPresent()) {
+            Album alb = albumOptional.get();
+            albumsRepository.delete(alb);
+            return true;
+        }
+        return false;
+    }
 }

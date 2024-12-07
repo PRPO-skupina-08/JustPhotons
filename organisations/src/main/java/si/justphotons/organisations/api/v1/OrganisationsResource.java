@@ -66,7 +66,7 @@ public class OrganisationsResource {
 	public ResponseEntity<Organisation> deleteOne(@PathVariable Long id) {
 		boolean succ = organisationsBean.deleteOne(id);
 		if (succ) {
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
@@ -90,7 +90,7 @@ public class OrganisationsResource {
 	}
 
 	@GetMapping("/{orgId}/albums/{albumId}")
-	public ResponseEntity<Album> postOne(@PathVariable Long orgId, @PathVariable Long albumId) {
+	public ResponseEntity<Album> getOne(@PathVariable Long orgId, @PathVariable Long albumId) {
 
 		Album al = albumsBean.getOne(orgId, albumId);
 		if (al == null) {
@@ -98,5 +98,28 @@ public class OrganisationsResource {
 		}
 		return new ResponseEntity<>(al, HttpStatus.OK);
 	}
+
+	@PutMapping("/{orgId}/albums/{albumId}")
+	public ResponseEntity<Album> putOne(@PathVariable Long orgId, @PathVariable Long albumId, @RequestBody Album album) {
+
+		Album al = albumsBean.updateOne(orgId, albumId, album);
+		if (al == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(al, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/{orgId}/albums/{albumId}")
+	public ResponseEntity<Album> deleteOne(@PathVariable Long orgId, @PathVariable Long albumId) {
+
+		boolean succ = albumsBean.removeOne(orgId, albumId);
+		if (succ) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
+	}
+
+
 
 }
