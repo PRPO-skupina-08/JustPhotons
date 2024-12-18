@@ -56,7 +56,7 @@ public class AlbumsBean {
         Optional<Album> albumOptional = albums.stream().filter(album -> album.getId().equals(albumId)).findFirst();
         if (albumOptional.isPresent()) {
             Album oldAlbum = albumOptional.get();
-            oldAlbum.setName(newAlbum.getName());
+            oldAlbum.setTitle(newAlbum.getTitle());
             Album alb = albumsRepository.save(oldAlbum);
             return alb;
         }

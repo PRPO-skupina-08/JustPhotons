@@ -6,18 +6,27 @@ import si.justphotons.organisations.services.beans.OrganisationsBean;
 import si.justphotons.organisations.services.dtos.OrganisationEssentials;
 import si.justphotons.organisations.services.beans.AlbumsBean;
 
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -40,7 +49,7 @@ public class OrganisationsResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Organisation> postOne(@RequestBody Organisation organisation) {
+	public ResponseEntity<Organisation> postOne(@Valid @RequestBody Organisation organisation) {
 		Organisation org = organisationsBean.insertOne(organisation);
 		return new ResponseEntity<>(org, HttpStatus.CREATED);
 	}
@@ -55,7 +64,7 @@ public class OrganisationsResource {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Organisation> putOne(@PathVariable Long id, @RequestBody Organisation entity) {
+	public ResponseEntity<Organisation> putOne(@PathVariable Long id, @Valid @RequestBody Organisation entity) {
 		boolean succ = organisationsBean.updateOne(id, entity);
 		if (succ) {
 			entity.setId(id);
@@ -84,7 +93,7 @@ public class OrganisationsResource {
 	}
 
 	@PostMapping("/{orgId}/albums")
-	public ResponseEntity<Album> postOne(@PathVariable Long orgId, @RequestBody Album album) {
+	public ResponseEntity<Album> postOne(@PathVariable Long orgId, @Valid @RequestBody Album album) {
 		Album al = albumsBean.insertOne(orgId, album);
 		if (al == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -103,7 +112,7 @@ public class OrganisationsResource {
 	}
 
 	@PutMapping("/{orgId}/albums/{albumId}")
-	public ResponseEntity<Album> putOne(@PathVariable Long orgId, @PathVariable Long albumId, @RequestBody Album album) {
+	public ResponseEntity<Album> putOne(@PathVariable Long orgId, @PathVariable Long albumId, @Valid @RequestBody Album album) {
 
 		Album al = albumsBean.updateOne(orgId, albumId, album);
 		if (al == null) {
@@ -123,6 +132,24 @@ public class OrganisationsResource {
 		
 	}
 
+
+	/*
+	 * Error handlers 
+	 */
+
+	// catches validation errors and returns messages for each field in JSON
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public Map<String, String> handleValidationExceptions(
+	MethodArgumentNotValidException ex) {
+		Map<String, String> errors = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach((error) -> {
+			String fieldName = ((FieldError) error).getField();
+			String errorMessage = error.getDefaultMessage();
+			errors.put(fieldName, errorMessage);
+		});
+		return errors;
+	}
 
 
 }

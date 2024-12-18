@@ -1,5 +1,6 @@
 package si.justphotons.organisations.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -10,6 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 @Entity
 @Table(name = "organisations")
 public class Organisation {
@@ -17,11 +21,17 @@ public class Organisation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "You must specify organisations name")
+    @Size(min = 1, max = 128)
     private String name;
+
+    @NotBlank(message = "You must specify some description")
+    @Size(min = 10, max = 1024)
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation")
-    private List<Album> albums;
+    private List<Album> albums = new ArrayList<>();
     
     public  Organisation() {}
 
