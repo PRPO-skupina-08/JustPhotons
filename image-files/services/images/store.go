@@ -14,7 +14,12 @@ func NewStore(db *gorm.DB) *Store {
 	return &Store{db: db}
 }
 
-func (s *Store) GetImageById(id int) (img types.Image, result *gorm.DB) {
+func (s *Store) GetAllImages(limit int, offset int) (img []*types.Image, result *gorm.DB) {
+    result = s.db.Limit(limit).Offset(offset).Find(img)
+    return
+}
+
+func (s *Store) GetImageById(id uint) (img types.Image, result *gorm.DB) {
     result = s.db.First(img, id)
     return
 }

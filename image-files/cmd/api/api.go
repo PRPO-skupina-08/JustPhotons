@@ -28,20 +28,15 @@ func NewAPIServer(addr string, db *gorm.DB) *APIServer {
 
 // Runs the API server
 func (s *APIServer) Run() error {
-	// Creates router
-	router := chi.NewRouter()
-    subrouter := chi.NewRouter()
-    router.Mount("/api/v1", subrouter)
-
-    // TODO: Test function
-    subrouter.Get("/", func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("Hello, World!"))
-    })
+	// Creates prefixed_router
+	prefixed_router := chi.NewRouter()
+    router := chi.NewRouter()
+    prefixed_router.Mount("/api/v1", router)
 
 	// Register / add endpoints (services), controller == handler
-    imageStore := images.NewStore(s.db)
-    imagesHandler := images.NewHandler(imageStore)
-    imagesHandler.CreateRoutes(subrouter)
+    imageStore := images.NewStore(s.db) // prepare for dependency injection
+    imagesHandler := images.NewHandler(imageStore) // create the controller and inject the dependency
+    imagesHandler.CreateRoutes(router)
 
     // For frontend.
 	c := cors.New(cors.Options{
@@ -50,7 +45,7 @@ func (s *APIServer) Run() error {
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,
 	})
-	corsHandler := c.Handler(router)
+	corsHandler := c.Handler(prefixed_router)
 
 	log.Printf("API server listening on port %s", s.addr)
 

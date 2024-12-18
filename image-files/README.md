@@ -32,6 +32,18 @@ default port of 3306
 
 ## API (REST)
 Due to early development phase of this app, the current API is as follows:
-- `GET /api/v1/images/{id}` - retrieves a specific image (for now its just a 
+- `GET /api/v1/images/{id}` - retrieves a specific image (for now it's just a 
     placeholder string)
 - `POST /api/v1/images` - Create an image. Required fields: `data` and `user_id`
+
+## Developer notes
+
+### File Structure
+- `/cmd/` - contains `main()`, the API logic and database migration logic
+- `/config/` - mostly for retrieving data from environment variables
+- `/db/` - database logic
+- `/services/` - all the business logic
+- `/utils/` - common functions (e.g. data validation, JSON parsing)
+
+### Call Chain
+

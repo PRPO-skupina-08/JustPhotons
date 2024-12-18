@@ -3,11 +3,10 @@ package types
 import "gorm.io/gorm"
 
 type ImageStore interface {
-	GetImageById(id int) (img Image, result *gorm.DB)
+	GetAllImages(limit int, offset int) (img Image, result *gorm.DB)
+	GetImageById(id uint) (img Image, result *gorm.DB)
 	InsertImage(img *Image) (result *gorm.DB)
-	// GetUserByEmail(email string) (*Image, error)
-	// GetUserByID(id int) (*Image, error)
-	// CreateUser(Image) error
+	DeleteImage(img *Image) (result *gorm.DB)
 }
 
 type Image struct {
