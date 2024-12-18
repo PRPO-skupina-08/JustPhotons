@@ -22,7 +22,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/organisations")
+@RequestMapping("/v1/organisations")
 public class OrganisationsResource {
 
 	private final OrganisationsBean organisationsBean;
