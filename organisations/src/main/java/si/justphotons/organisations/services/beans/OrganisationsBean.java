@@ -1,5 +1,6 @@
 package si.justphotons.organisations.services.beans;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import si.justphotons.organisations.entities.Organisation;
 import si.justphotons.organisations.entities.OrganisationsRepository;
+import si.justphotons.organisations.services.dtos.OrganisationEssentials;
 
 @Service
 public class OrganisationsBean {
@@ -19,8 +21,9 @@ public class OrganisationsBean {
     this.organisationsRepository = o;
   }
 
-  public List<Organisation> getAll() {
-    return organisationsRepository.findAll();
+  public List<OrganisationEssentials> getAll() {
+    List<Organisation> orgs = organisationsRepository.findAll();
+    return convertToEssentials(orgs);
   }
 
   public Organisation insertOne(Organisation organisation) {
@@ -56,6 +59,23 @@ public class OrganisationsBean {
     }
     
     return false;
+  }
+
+
+  /*
+  conversion methods
+  */ 
+
+  private List<OrganisationEssentials> convertToEssentials(List<Organisation> organisations) {
+    List<OrganisationEssentials> essentials = new ArrayList<>();
+    for (Organisation org : organisations) {
+      OrganisationEssentials ess = new OrganisationEssentials();
+      ess.setId(org.getId());
+      ess.setName(org.getName());
+      essentials.add(ess);
+    }
+
+    return essentials;
   }
 
 }

@@ -3,6 +3,7 @@ package si.justphotons.organisations.api.v1;
 import si.justphotons.organisations.entities.Album;
 import si.justphotons.organisations.entities.Organisation;
 import si.justphotons.organisations.services.beans.OrganisationsBean;
+import si.justphotons.organisations.services.dtos.OrganisationEssentials;
 import si.justphotons.organisations.services.beans.AlbumsBean;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -32,8 +34,8 @@ public class OrganisationsResource {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Organisation>> getAll() {
-		List<Organisation> orgs = organisationsBean.getAll();
+	public ResponseEntity<List<OrganisationEssentials>> getAll() {
+		List<OrganisationEssentials> orgs = organisationsBean.getAll();
 		return ResponseEntity.ok(orgs);
 	}
 
@@ -72,8 +74,9 @@ public class OrganisationsResource {
 	}
 
 	@GetMapping("/{orgId}/albums")
-	public ResponseEntity<List<Album>> getAlbums(@PathVariable Long orgId) {
-		List<Album> albums = albumsBean.getAll(orgId);
+	public ResponseEntity<List<Album>> getAlbums(@PathVariable Long orgId, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "25") Integer pageSize) {
+		List<Album> albums = albumsBean.getAll(orgId, page, pageSize);
+
 		if (albums == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}

@@ -3,6 +3,8 @@ package si.justphotons.organisations.services.beans;
 import java.util.List;
 
 import java.util.Optional;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -21,11 +23,10 @@ public class AlbumsBean {
         this.albumsRepository = a;
     }
 
-    public List<Album> getAll(Long orgId) {
+    public List<Album> getAll(Long orgId, Integer page, Integer limit) {
         Optional<Organisation> orgOptional = organisationsRepository.findById(orgId);
         if (orgOptional.isPresent()) {
-            Organisation org = orgOptional.get();
-            return org.getAlbums();
+            return albumsRepository.getByOrganisationIdPaged(orgId, PageRequest.of(page, limit));
         }
         return null;
     } 
