@@ -32,6 +32,7 @@ func (h *Handler) CreateRoutes(parentRouter *chi.Mux) {
 	subrouter.Get("/", h.handleGetAllImages)
 	subrouter.Get("/{id}", h.handleGetImage)
 	subrouter.Post("/", h.handlePostImage)
+	subrouter.Delete("/{id}", h.handleDeleteImage)
 }
 
 func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +59,7 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 	// check if image exists
 	img, result := h.store.GetAllImages(int(limit), int(offset))
 	if result.Error != nil {
-		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist", id))
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("No images found! error: %v", result.Error))
 		return
 	}
 
@@ -75,7 +76,7 @@ func (h *Handler) handleGetImage(w http.ResponseWriter, r *http.Request) {
 	// retrieve image / check if image exists
 	img, result := h.store.GetImageById(uint(id))
 	if result.Error != nil {
-		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist", id))
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
 		return
 	}
 
@@ -101,4 +102,22 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusCreated, nil)
+}
+
+func (h *Handler) handleDeleteImage(w http.ResponseWriter, r *http.Request) {
+	paramId := chi.URLParam(r, "id")
+
+	id, err := strconv.ParseUint(paramId, 10, 64)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	// retrieve image / check if image exists
+
+	if result := h.store.DeleteImage(uint(id)); result.Error != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusNoContent, nil)
 }
