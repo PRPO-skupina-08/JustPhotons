@@ -85,6 +85,8 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+
+		<finalName>organisations</finalName>
 	</build>
 
 </project>
