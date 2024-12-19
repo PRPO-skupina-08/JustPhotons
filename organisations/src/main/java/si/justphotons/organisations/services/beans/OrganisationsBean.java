@@ -36,18 +36,17 @@ public class OrganisationsBean {
   }
 
   @Transactional
-  public boolean updateOne(Long id, Organisation org) {
+  public Organisation updateOne(Long id, Organisation org) {
     Optional<Organisation> orgOptional = organisationsRepository.findById(id);
     if (orgOptional.isPresent()) {
       Organisation o = orgOptional.get();
       o.setId(id);
       o.setDescription(org.getDescription());
       o.setName(org.getName());
-      o.setAlbums(org.getAlbums());
-      organisationsRepository.save(o);
-      return true;
+      Organisation res = organisationsRepository.save(o);
+      return res;
     }
-    return false;
+    return null;
   }
 
   @Transactional

@@ -2,6 +2,7 @@ package si.justphotons.organisations.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,13 +25,25 @@ public class Album {
     @Size(min = 1, max = 64, message = "Album title should be from 1 to 64 characters long.")
     private String title;
 
+    @Size(min = 24, max = 24, message = "imgId is always 24 chars long")
+    @Column(name="titleimage")
+    private String titleImage;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "organisation_id")
     private Organisation organisation;
     
     public  Album() {}
+    
+    public String getTitleImage() {
+        return titleImage;
+    }
 
+    public void setTitleImage(String titleImage) {
+        this.titleImage = titleImage;
+    }
+    
     public Long getId() {
         return id;
     }

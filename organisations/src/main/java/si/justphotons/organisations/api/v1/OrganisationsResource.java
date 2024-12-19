@@ -65,10 +65,9 @@ public class OrganisationsResource {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Organisation> putOne(@PathVariable Long id, @Valid @RequestBody Organisation entity) {
-		boolean succ = organisationsBean.updateOne(id, entity);
-		if (succ) {
-			entity.setId(id);
-			return new ResponseEntity<>(entity, HttpStatus.OK);
+		Organisation org = organisationsBean.updateOne(id, entity);
+		if (org != null) {
+			return new ResponseEntity<>(org, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
@@ -101,15 +100,15 @@ public class OrganisationsResource {
 		return new ResponseEntity<>(al, HttpStatus.CREATED);
 	}
 
-	@GetMapping("/{orgId}/albums/{albumId}")
-	public ResponseEntity<Album> getOne(@PathVariable Long orgId, @PathVariable Long albumId) {
+	// @GetMapping("/{orgId}/albums/{albumId}")
+	// public ResponseEntity<Album> getOne(@PathVariable Long orgId, @PathVariable Long albumId) {
 
-		Album al = albumsBean.getOne(orgId, albumId);
-		if (al == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(al, HttpStatus.OK);
-	}
+	// 	Album al = albumsBean.getOne(orgId, albumId);
+	// 	if (al == null) {
+	// 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	// 	}
+	// 	return new ResponseEntity<>(al, HttpStatus.OK);
+	// }
 
 	@PutMapping("/{orgId}/albums/{albumId}")
 	public ResponseEntity<Album> putOne(@PathVariable Long orgId, @PathVariable Long albumId, @Valid @RequestBody Album album) {

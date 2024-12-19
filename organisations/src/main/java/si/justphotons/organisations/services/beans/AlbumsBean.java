@@ -36,20 +36,20 @@ public class AlbumsBean {
         Optional<Organisation> orgOptional = organisationsRepository.findById(orgId);
         if (orgOptional.isPresent()) {
             Organisation org = orgOptional.get();
-            album.setOrganisation(org);;
+            album.setOrganisation(org);
             Album al = albumsRepository.save(album);
             return al;
         }
         return null;
     }
 
-    public Album getOne(Long orgId, Long albumId) {
-        List<Album> albums = albumsRepository.getByOrganisationId(orgId);
-        return albums.stream()
-            .filter(album -> album.getId().equals(albumId))
-            .findFirst()
-            .orElse(null);
-    }
+    // public Album getOne(Long orgId, Long albumId) {
+    //     List<Album> albums = albumsRepository.getByOrganisationId(orgId);
+    //     return albums.stream()
+    //         .filter(album -> album.getId().equals(albumId))
+    //         .findFirst()
+    //         .orElse(null);
+    // }
 
     public Album updateOne(Long orgId, Long albumId, Album newAlbum) {
         List<Album> albums = albumsRepository.getByOrganisationId(orgId);
@@ -57,6 +57,7 @@ public class AlbumsBean {
         if (albumOptional.isPresent()) {
             Album oldAlbum = albumOptional.get();
             oldAlbum.setTitle(newAlbum.getTitle());
+            oldAlbum.setTitleImage(newAlbum.getTitleImage());
             Album alb = albumsRepository.save(oldAlbum);
             return alb;
         }

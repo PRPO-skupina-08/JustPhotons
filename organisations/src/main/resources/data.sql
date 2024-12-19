@@ -4,6 +4,6 @@ INSERT INTO organisations (name, description) VALUES ('Mladi SDS', 'Matic je na≈
 INSERT INTO organisations (name, description) VALUES ('Oracle', 'Mi smo pa mal bolj resni.');
 
 
-INSERT INTO albums (title, organisation_id) VALUES ('Album 1', 2);
-INSERT INTO albums (title, organisation_id) VALUES ('Album 1', 1);
-INSERT INTO albums (title, organisation_id) VALUES ('Album 42', 2);
+INSERT INTO albums (title, organisation_id, titleImage) VALUES ('Album 1', 2, '424242424242424242424242');
+INSERT INTO albums (title, organisation_id, titleImage) VALUES ('Album 1', 1, '424242424242424242424242');
+INSERT INTO albums (title, organisation_id, titleImage) VALUES ('Album 42', 2, '424242424242424242424242');
