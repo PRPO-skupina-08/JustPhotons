@@ -1,4 +1,4 @@
-package si.justphotons.coordinator.entities;
+package si.justphotons.coordinator.entities.external;
 
 public class OrganisationEssentials {
 
