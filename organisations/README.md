@@ -1,5 +1,13 @@
 # Organisations microservice
 
+## How to run
+
+In `/organisations` directory run:
+```bash
+docker build -t organisations .
+docker run -p 8080:8080 organisations
+```
+
 ## API endpoints
 
 ### /organisations
