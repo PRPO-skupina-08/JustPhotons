@@ -58,7 +58,9 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 
 	// check if image exists
 	img, result := h.store.GetAllImages(int(limit), int(offset))
-	if result.Error != nil {
+	if result == nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("No images found! error: %v", result.Error))
 		return
 	}
@@ -75,7 +77,9 @@ func (h *Handler) handleGetImage(w http.ResponseWriter, r *http.Request) {
 
 	// retrieve image / check if image exists
 	img, result := h.store.GetImageById(uint(id))
-	if result.Error != nil {
+	if result == nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
 		return
 	}
@@ -91,12 +95,18 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(payload.Data) == 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty payload!"))
+		return
+	}
+
 	// create new image
 	result := h.store.InsertImage(&types.Image{
-		UserID: payload.UserID,
-		Data:   payload.Data,
+		Data: payload.Data,
 	})
-	if result.Error != nil {
+	if result == nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusInternalServerError, result.Error)
 		return
 	}
@@ -114,7 +124,9 @@ func (h *Handler) handleDeleteImage(w http.ResponseWriter, r *http.Request) {
 
 	// retrieve image / check if image exists
 
-	if result := h.store.DeleteImage(uint(id)); result.Error != nil {
+	if result := h.store.DeleteImage(uint(id)); result == nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
 		return
 	}

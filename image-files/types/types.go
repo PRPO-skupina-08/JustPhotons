@@ -11,15 +11,9 @@ type ImageStore interface {
 
 type Image struct {
 	gorm.Model
-	UserID int    `gorm:"not null"`
-	Data   []byte `gorm:"not null;check:data<>''"`
-}
-
-type IDImagePayload struct {
-	ID int `json:"id"`
+	Data []byte `gorm:"not null;check:data<>''"`
 }
 
 type InsertImagePayload struct {
-	UserID int    `json:"userID"`
-	Data   []byte `json:"data"`
+	Data []byte `json:"data"`
 }
