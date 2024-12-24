@@ -11,9 +11,11 @@ type ImageStore interface {
 
 type Image struct {
 	gorm.Model
-	Data []byte `gorm:"not null;check:data<>''"`
+	Filename string `gorm:"not null;check:filename<>''"`
+	Data     []byte `gorm:"not null;check:data<>''"`
 }
 
 type InsertImagePayload struct {
-	Data []byte `json:"data"`
+	Filename string `json:"filename"`
+	Data     []byte `json:"data"`
 }

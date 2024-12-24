@@ -5,7 +5,9 @@ import (
 	"image-service/types"
 	"image-service/utils"
 	"net/http"
+	"path"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -97,6 +99,21 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 
 	if len(payload.Data) == 0 {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty payload!"))
+		return
+	}
+
+	if len(payload.Filename) == 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty payload!"))
+		return
+	}
+
+	switch strings.ToLower(path.Ext(payload.Filename)) {
+	case ".jpg":
+	case ".jpeg":
+	case ".png":
+		break
+	default:
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Uploaded file doesn't end in jpg, jpeg or png!"))
 		return
 	}
 
