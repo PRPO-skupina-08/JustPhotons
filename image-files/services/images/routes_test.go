@@ -2,6 +2,7 @@ package images
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"image-service/config"
 	"image-service/types"
@@ -64,7 +65,7 @@ func TestImageServiceHandlers(t *testing.T) {
 	t.Run("Should fail due to empty data", handler.abstracted_POST(
 		types.InsertImagePayload{
 			Filename: "name.jpg",
-			Data:     []byte{},
+			Data:     base64.StdEncoding.EncodeToString([]byte{}),
 		},
 		http.StatusBadRequest,
 	))
@@ -72,7 +73,7 @@ func TestImageServiceHandlers(t *testing.T) {
 	t.Run("Should fail due to empty filename", handler.abstracted_POST(
 		types.InsertImagePayload{
 			Filename: "",
-			Data:     []byte{0xCA, 0xFE, 0xBA, 0xBE}, // ultimate Java sarcasm
+			Data:     base64.StdEncoding.EncodeToString([]byte{0xCA, 0xFE, 0xBA, 0xBE}), // ultimate Java sarcasm
 		},
 		http.StatusBadRequest,
 	))
@@ -80,7 +81,7 @@ func TestImageServiceHandlers(t *testing.T) {
 	t.Run("Should fail due to not jpg", handler.abstracted_POST(
 		types.InsertImagePayload{
 			Filename: "name.random",
-			Data:     []byte{0xCA, 0xFE, 0xBA, 0xBE}, // ultimate Java sarcasm
+			Data:     base64.StdEncoding.EncodeToString([]byte{0xCA, 0xFE, 0xBA, 0xBE}), // ultimate Java sarcasm
 		},
 		http.StatusBadRequest,
 	))
@@ -88,7 +89,7 @@ func TestImageServiceHandlers(t *testing.T) {
 	t.Run("Should correctly add new data entry", handler.abstracted_POST(
 		types.InsertImagePayload{
 			Filename: "name.jpg",
-			Data:     []byte{0xCA, 0xFE, 0xBA, 0xBE}, // ultimate Java sarcasm
+			Data:     base64.StdEncoding.EncodeToString([]byte{0xCA, 0xFE, 0xBA, 0xBE}), // ultimate Java sarcasm
 		},
 		http.StatusCreated,
 	))

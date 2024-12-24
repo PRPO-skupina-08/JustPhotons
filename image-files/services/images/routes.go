@@ -1,6 +1,7 @@
 package images
 
 import (
+	"encoding/base64"
 	"fmt"
 	"image-service/types"
 	"image-service/utils"
@@ -67,7 +68,16 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, img)
+    var returnPayload []types.InsertImagePayload = make([]types.InsertImagePayload, 0)
+
+    for _,i := range img {
+        returnPayload = append(returnPayload, types.InsertImagePayload{
+            Filename: i.Filename,
+            Data: base64.StdEncoding.EncodeToString(i.Data),
+        })
+    }
+
+	utils.WriteJSON(w, http.StatusOK, returnPayload)
 }
 
 func (h *Handler) handleGetImage(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +96,10 @@ func (h *Handler) handleGetImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, img)
+	utils.WriteJSON(w, http.StatusOK, types.InsertImagePayload{
+        Filename: img.Filename,
+        Data: base64.StdEncoding.EncodeToString(img.Data),
+    })
 }
 
 func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
@@ -117,9 +130,17 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+    // Decode data from base64
+    imageData, err := base64.StdEncoding.DecodeString(payload.Data)
+    if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+    }
+
 	// create new image
 	result := h.store.InsertImage(&types.Image{
-		Data: payload.Data,
+        Filename: payload.Filename,
+		Data: imageData,
 	})
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
@@ -128,7 +149,7 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, nil)
+	utils.WriteJSON(w, http.StatusCreated, payload)
 }
 
 func (h *Handler) handleDeleteImage(w http.ResponseWriter, r *http.Request) {

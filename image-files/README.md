@@ -49,6 +49,12 @@ run:
 mariadb -h 172.17.0.2 -u root -p
 ```
 
+Useful commands:
+- `USE image_files`
+- `SHOW tables`
+- `SELECT * from <table>`
+- `DROP TABLE <table>`
+
 `-p` will prompt for password, which was set when initializing the DBMS.
 
 #### GORM Migrations

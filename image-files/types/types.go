@@ -17,5 +17,5 @@ type Image struct {
 
 type InsertImagePayload struct {
 	Filename string `json:"filename"`
-	Data     []byte `json:"data"`
+	Data     string `json:"data"`
 }
