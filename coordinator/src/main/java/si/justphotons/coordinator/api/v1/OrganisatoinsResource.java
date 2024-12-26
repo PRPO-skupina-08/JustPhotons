@@ -12,13 +12,13 @@ import si.justphotons.coordinator.entities.external.EssentialsList;
 import si.justphotons.coordinator.entities.external.OrganisationEssentials;
 import si.justphotons.coordinator.services.beans.CoordinatorBean;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
 @RequestMapping("/api/v1/organisations")
 public class OrganisatoinsResource {
 
+	private static final int ORGANISATIONS_PORT = 8082;
 
     private final CoordinatorBean coordinatorBean;
 
@@ -28,11 +28,12 @@ public class OrganisatoinsResource {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<OrganisationEssentials>> getAll() {
+	public ResponseEntity<OrganisationEssentials[]> getAll() {
 		RestTemplate restTemplate = new RestTemplate();
-		EssentialsList response =  restTemplate.getForObject(
-			"localhost:8082/v1/organisations", EssentialsList.class);
-		List<OrganisationEssentials> essentials = response.getEssentials();
+		ResponseEntity<OrganisationEssentials[]> response =  restTemplate.getForEntity(
+			String.format("http://localhost:%d/v1/organisations", ORGANISATIONS_PORT),
+			OrganisationEssentials[].class);
+		OrganisationEssentials[] essentials = response.getBody();
 		return new ResponseEntity<>(essentials, HttpStatus.OK);
 	}
 
