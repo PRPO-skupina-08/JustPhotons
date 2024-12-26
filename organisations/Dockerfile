@@ -10,6 +10,8 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 # Use an official OpenJDK image as the base image
 FROM openjdk:17-jdk-slim
+
+EXPOSE 8082
 # Set the working directory in the container
 WORKDIR /app
 # Copy the built JAR file from the previous stage to the container
