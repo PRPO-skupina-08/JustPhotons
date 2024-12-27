@@ -1,3 +1,6 @@
 package config
 
-const APIVersion = "/api/v1"
+const (
+	APIVersion = "/api/v1"
+	Subroute = "/image"
+)

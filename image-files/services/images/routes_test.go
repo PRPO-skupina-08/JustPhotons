@@ -26,13 +26,13 @@ func (m *mockImageStore) GetImageById(id uint) (img types.Image, result *gorm.DB
 	return
 }
 
-func (m *mockImageStore) InsertImage(img *types.Image) (result *gorm.DB) {
-	result = &gorm.DB{}
-	return
+func (m *mockImageStore) InsertImage(img *types.Image) (*types.Image, *gorm.DB) {
+    result := &gorm.DB{}
+	return nil, result
 }
 
 func (m *mockImageStore) DeleteImage(id uint) (result *gorm.DB) {
-	result = &gorm.DB{}
+    result = &gorm.DB{}
 	return
 }
 
