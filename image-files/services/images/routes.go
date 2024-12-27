@@ -49,6 +49,7 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 		limit, err = strconv.ParseUint(limit_s, 10, 64)
 		if err != nil {
 			utils.WriteError(w, http.StatusBadRequest, err)
+            return
 		}
 	}
 
@@ -56,6 +57,7 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 		offset, err = strconv.ParseUint(offset_s, 10, 64)
 		if err != nil {
 			utils.WriteError(w, http.StatusBadRequest, err)
+            return
 		}
 	}
 
