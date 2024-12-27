@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"image-service/types"
 	"image-service/utils"
+	"log"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -68,14 +70,11 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    var returnPayload []types.InsertImagePayload = make([]types.InsertImagePayload, 0)
+	var returnPayload []types.Image = make([]types.Image, 0)
 
-    for _,i := range img {
-        returnPayload = append(returnPayload, types.InsertImagePayload{
-            Filename: i.Filename,
-            Data: base64.StdEncoding.EncodeToString(i.Data),
-        })
-    }
+	for _, i := range img {
+		returnPayload = append(returnPayload, *i)
+	}
 
 	utils.WriteJSON(w, http.StatusOK, returnPayload)
 }
@@ -96,10 +95,7 @@ func (h *Handler) handleGetImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, types.InsertImagePayload{
-        Filename: img.Filename,
-        Data: base64.StdEncoding.EncodeToString(img.Data),
-    })
+	utils.WriteJSON(w, http.StatusOK, img)
 }
 
 func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
@@ -111,12 +107,12 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(payload.Data) == 0 {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty payload!"))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty data field!"))
 		return
 	}
 
 	if len(payload.Filename) == 0 {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty payload!"))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty filename field!"))
 		return
 	}
 
@@ -130,26 +126,37 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    // Decode data from base64
-    imageData, err := base64.StdEncoding.DecodeString(payload.Data)
-    if err != nil {
+	// Decode data from base64
+	imageData, err := base64.StdEncoding.DecodeString(payload.Data)
+	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
-    }
+	}
+
+	/**
+	* This is just a debug function - it creates a test.{jpg, png ...} file to
+	* check if bytes were written correctly.
+	 */
+
+	/*
+	   if os.WriteFile("test"+strings.ToLower(path.Ext(payload.Filename)), imageData, 0644) != nil {
+	       log.Printf("Error writing file '%s': %v\n", payload.Filename, err)
+	   }
+	*/
 
 	// create new image
-	result := h.store.InsertImage(&types.Image{
-        Filename: payload.Filename,
-		Data: imageData,
+	img, result := h.store.InsertImage(&types.Image{
+		Filename: payload.Filename,
+		Data:     imageData,
 	})
 	if result == nil {
-		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB post result is nil"))
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusInternalServerError, result.Error)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, payload)
+	utils.WriteJSON(w, http.StatusCreated, img)
 }
 
 func (h *Handler) handleDeleteImage(w http.ResponseWriter, r *http.Request) {
@@ -166,6 +173,9 @@ func (h *Handler) handleDeleteImage(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
+		return
+	} else if result.RowsAffected == 0 {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist (rows affected == 0).", id))
 		return
 	}
 
