@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"image-service/types"
 	"image-service/utils"
-	"log"
 	"net/http"
-	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -134,12 +132,12 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	/**
-	* This is just a debug function - it creates a test.{jpg, png ...} file to
+	* This is just a debug function - it creates a test_image.{jpg, png ...} file to
 	* check if bytes were written correctly.
 	 */
 
 	/*
-	   if os.WriteFile("test"+strings.ToLower(path.Ext(payload.Filename)), imageData, 0644) != nil {
+	   if os.WriteFile("test_image"+strings.ToLower(path.Ext(payload.Filename)), imageData, 0644) != nil {
 	       log.Printf("Error writing file '%s': %v\n", payload.Filename, err)
 	   }
 	*/
