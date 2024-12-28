@@ -13,6 +13,9 @@ httptest: build
 	{ cd ./tests/ && hurl test.hurl && [ "$$?" -eq 0 ] && echo "TESTING PASSED" || echo "TESTING FAILED"; } || true; \
 	kill $$server_pid
 
+test: gotest httptest
+	@echo "Tests completed."
+
 migrate: build
 	@go run cmd/migrate/migrate.go
 
