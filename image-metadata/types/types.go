@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type MetadataStore interface {
 	GetMetadataById(id uint) (md Metadata, result *gorm.DB)
 	GetAllMetadata(limit int, offset int, order *string, imgID uint, rating uint) (md []*Metadata, result *gorm.DB)
-	InsertMetadata(md *Metadata) (result *gorm.DB)
+	InsertMetadata(md *Metadata) (*Metadata, *gorm.DB)
 	DeleteMetadata(id uint) (result *gorm.DB)
 }
 
@@ -22,3 +22,8 @@ type Metadata struct {
 // 	Filename string `gorm:"not null;check:filename<>''"`
 // 	Data     []byte `gorm:"not null;check:data<>''"`
 // }
+
+type InsertMetadataPayload struct {
+	ImageId uint
+	Rating  uint
+}

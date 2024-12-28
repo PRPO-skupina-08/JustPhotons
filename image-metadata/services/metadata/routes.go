@@ -106,7 +106,46 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handlePostMetadata(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	// get JSON payload
+	var payload types.InsertMetadataPayload
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if payload.Rating < 0 || 5 < payload.Rating {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Incorrect rating field! Must be between 0 and 5"))
+		return
+	}
+
+	if payload.ImageId == 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty filename field!"))
+		return
+	}
+
+	/**
+	* This is just a debug function - it creates a test_image.{jpg, png ...} file to
+	* check if bytes were written correctly.
+	 */
+	/*
+	   if os.WriteFile("test_image"+strings.ToLower(path.Ext(payload.Filename)), imageData, 0644) != nil {
+	       log.Printf("Error writing file '%s': %v\n", payload.Filename, err)
+	   }
+	*/
+
+	// create new image
+	md, result := h.store.InsertMetadata(&types.Metadata{
+        ImageId: payload.ImageId,
+        Rating: payload.Rating,
+	})
+	if result == nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB post result is nil"))
+	} else if result.Error != nil {
+		utils.WriteError(w, http.StatusInternalServerError, result.Error)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusCreated, md)
 }
 
 func (h *Handler) handleDeleteMetadata(w http.ResponseWriter, r *http.Request) {

@@ -34,9 +34,9 @@ func (s *Store) GetAllMetadata(limit int, offset int, order *string, imgID uint,
 	return
 }
 
-func (s *Store) InsertMetadata(img *types.Metadata) (result *gorm.DB) {
-	result = s.db.Create(&img)
-	return
+func (s *Store) InsertMetadata(md *types.Metadata) (*types.Metadata, *gorm.DB) {
+    result := s.db.Create(&md)
+	return md, result
 }
 
 func (s *Store) DeleteMetadata(id uint) (result *gorm.DB) {
