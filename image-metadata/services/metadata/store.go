@@ -19,6 +19,21 @@ func (s *Store) GetMetadataById(id uint) (img types.Metadata, result *gorm.DB) {
 	return
 }
 
+func (s *Store) GetAllMetadata(limit int, offset int, order *string, imgID uint, rating uint) (md []*types.Metadata, result *gorm.DB) {
+	result = s.db.Limit(limit).Offset(offset)
+    if len(*order) > 0 {
+        result = result.Order(order)
+    }
+    if imgID > 0 {
+        result = result.Where(&types.Metadata{ImageId: imgID, Rating: rating})
+    }
+    if rating > 0 {
+        result = result.Where(&types.Metadata{ImageId: imgID, Rating: rating})
+    }
+    result.Find(&md)
+	return
+}
+
 func (s *Store) InsertMetadata(img *types.Metadata) (result *gorm.DB) {
 	result = s.db.Create(&img)
 	return

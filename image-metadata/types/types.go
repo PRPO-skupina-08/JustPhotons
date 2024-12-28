@@ -4,6 +4,7 @@ import "gorm.io/gorm"
 
 type MetadataStore interface {
 	GetMetadataById(id uint) (md Metadata, result *gorm.DB)
+	GetAllMetadata(limit int, offset int, order *string, imgID uint, rating uint) (md []*Metadata, result *gorm.DB)
 	InsertMetadata(md *Metadata) (result *gorm.DB)
 	DeleteMetadata(id uint) (result *gorm.DB)
 }
