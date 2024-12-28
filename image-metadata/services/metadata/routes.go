@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+    _ "image-metadata/cmd/docs"
 )
 
 type SortToken struct {
@@ -44,6 +45,18 @@ func (h *Handler) CreateRoutes(parentRouter *chi.Mux) {
 	subrouter.Delete("/", h.handleDeleteSpecificMetadata)
 }
 
+// GetMetadata godoc
+//
+//	@Summary		Get single Metadata entry
+//	@Description	retrieves a specific metadata entry based on its ID.
+//	@Tags			metadata
+//	@Produce		json
+//	@Param			id	path		uint			true	"Metadata entry ID"
+//	@Success		200	{object}	types.Metadata	"Matching entry"
+//	@Failure		400	{object}	error			"Incorrect input"
+//	@Failure		404	{object}	error			"No results"
+//	@Failure		500	{object}	error			"Internal server error"
+//	@Router			/metadata/{id} [get]
 func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 	paramId := chi.URLParam(r, "id")
 	id, err := strconv.ParseUint(paramId, 10, 64)
@@ -64,6 +77,21 @@ func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, img)
 }
 
+// GetAllMetadata godoc
+//
+//	@Summary		Get many Metadata entries
+//	@Description	retrieves many metadata entries based on its query parameters.
+//	@Tags			metadata
+//	@Produce		json
+//	@Param			limit	query		uint			false	"Maximum amount of returned entries (>0)"
+//	@Param			offset	query		uint			false	"Amount of entries left out at the start"
+//	@Param			sort	query		string			false	"SQL sorting in with pattern `<field>:<order>[,]...`, first pattern does primary sort, second pattern secondary sort etc."
+//	@Param			rating	query		uint			false	"Image rating, between 0 and 5 (inclusive)"
+//	@Success		200		{object}	types.Metadata	"Matching entry"
+//	@Failure		400		{object}	error			"Incorrect input"
+//	@Failure		404		{object}	error			"No results"
+//	@Failure		500		{object}	error			"Internal server error"
+//	@Router			/metadata [get]
 func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 	limit, err := getURLQuery(r, "limit", parseUintWrapper(), 20)
 	if err != nil {
@@ -108,6 +136,18 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, md)
 }
 
+// PostMetadata godoc
+//
+//	@Summary		Insert/create a new Metadata entry
+//	@Description	creates a new metadata entry in the database
+//	@Tags			metadata
+//	@Accept			json
+//	@Produce		json
+//	@Param			metadata	body		types.InsertMetadataPayload	true	"Insert metadata payload"
+//	@Success		201			{object}	types.Metadata				"Successfully created new entry"
+//	@Failure		400			{object}	error						"Incorrect input (missing fields, incorrect data etc.)"
+//	@Failure		500			{object}	error						"Internal server error, but can be caused by database rejecting wrong data (would be a developer's mistake)."
+//	@Router			/metadata [post]
 func (h *Handler) handlePostMetadata(w http.ResponseWriter, r *http.Request) {
 	// get JSON payload
 	var payload types.InsertMetadataPayload
@@ -152,6 +192,18 @@ func (h *Handler) handlePostMetadata(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusCreated, md)
 }
 
+// DeleteMetadata godoc
+//
+//	@Summary		Delete a single Metadata entry
+//	@Description	Deletes a specific metadata entry based on its ID.
+//	@Tags			metadata
+//	@Produce		json
+//	@Param			id	path		uint	true	"Metadata entry ID"
+//	@Success		204	{object}	nil		"Sucessfully deleted"
+//	@Failure		400	{object}	error	"Incorrect input"
+//	@Failure		404	{object}	error	"Nothing to delete"
+//	@Failure		500	{object}	error	"Internal server error"
+//	@Router			/metadata/{id} [delete]
 func (h *Handler) handleDeleteMetadata(w http.ResponseWriter, r *http.Request) {
 	paramId := chi.URLParam(r, "id")
 	id, err := strconv.ParseUint(paramId, 10, 64)
@@ -173,10 +225,24 @@ func (h *Handler) handleDeleteMetadata(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusNoContent, nil)
 }
 
+// DeleteSpecificMetadata godoc
+//
+//	@Summary		Delete many Metadata entries
+//	@Description	deletes many metadata entries based on its query parameters. **At least one paramater must be present!**
+//	@Tags			metadata
+//	@Produce		json
+//	@Param			image_id	query		uint	false	"Image ID (not the metadata entry's ID)"
+//	@Param			rating		query		uint	false	"Image rating, between 0 and 5 (inclusive)"
+//	@Success		204			{object}	nil		"Matching entry"
+//	@Failure		400			{object}	error	"Incorrect input"
+//	@Failure		400			{object}	error	"Neither `image_id` nor `rating` specified, but at least one is needed"
+//	@Failure		404			{object}	error	"No results"
+//	@Failure		500			{object}	error	"Internal server error"
+//	@Router			/metadata [delete]
 func (h *Handler) handleDeleteSpecificMetadata(w http.ResponseWriter, r *http.Request) {
 	var whereClauses []string = make([]string, 0)
 
-    imageID, err := getURLQuery(r, "image_id", parseUintWrapper(), 0)
+	imageID, err := getURLQuery(r, "image_id", parseUintWrapper(), 0)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
