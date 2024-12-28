@@ -1,7 +1,5 @@
 # IMAGE-FILE MICROSERVICE
 
-
-
 ## Running
 
 ### Prerequisites
@@ -13,28 +11,19 @@ file. To see the default settings used in case no environment variables are
 used, see the `initDBConfig()` function inside `./config/env.go`
 
 ### Running
-Make sure you have go installed. To run this microservice (for now, not 
-containerized), you have two options:
+Make sure you have [Go](https://go.dev/) installed. This program utilizes 
+Makefile for running and compilation.
 
-First: run the following commands:
-```bash
-go mod tidy
-go run ./cmd/main.go
-```
-
-Second (**make**): if you have Make installed, you can run the following:
+You can run the program with the following command:
 ```bash
 make run
 ```
 
-Either block of code you decide to use will start the application on the
-default port of 3306
-
 ## API (REST)
 Due to early development phase of this app, the current API is as follows:
-- `GET /api/v1/images/{id}` - retrieves a specific image (for now it's just a 
-    placeholder string)
-- `POST /api/v1/images` - Create an image. Required fields: `data` and `user_id`
+- `GET /api/v1/images/{id}` - retrieves a specific image 
+- `POST /api/v1/images` - Create an image. Required fields: `data` and 
+`filename`
 
 ## Developer notes
 

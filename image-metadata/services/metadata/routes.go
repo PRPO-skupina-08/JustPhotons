@@ -83,7 +83,7 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imageID, err := getURLQuery(r, "imageID", parseUintWrapper(), 0)
+	imageID, err := getURLQuery(r, "image_id", parseUintWrapper(), 0)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return

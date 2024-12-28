@@ -1,34 +1,34 @@
 POST http://localhost:8080/api/v1/metadata
 {
-    "imageId": 19,
+    "image_id": 19,
     "rating": 5
 }
 HTTP 201
 
 POST http://localhost:8080/api/v1/metadata
 {
-    "imageId": 23,
+    "image_id": 23,
     "rating": 3
 }
 HTTP 201
 
 POST http://localhost:8080/api/v1/metadata
 {
-    "imageId": 24,
+    "image_id": 24,
     "rating": 3
 }
 HTTP 201
 
 POST http://localhost:8080/api/v1/metadata
 {
-    "imageId": 22,
+    "image_id": 22,
     "rating": 3
 }
 HTTP 201
 
 POST http://localhost:8080/api/v1/metadata
 {
-    "imageId": 26,
+    "image_id": 26,
     "rating": 0
 }
 HTTP 201

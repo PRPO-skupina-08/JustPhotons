@@ -25,6 +25,6 @@ type Metadata struct {
 // }
 
 type InsertMetadataPayload struct {
-	ImageId uint `json:"imageId"`
+	ImageId uint `json:"image_id"`
 	Rating  uint `json:"rating"`
 }
