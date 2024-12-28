@@ -3,18 +3,19 @@ package types
 import "gorm.io/gorm"
 
 type MetadataStore interface {
-	GetMetadataById(id uint) (md Metadata, result *gorm.DB)
-	GetAllMetadata(limit int, offset int, order *string, imgID uint, rating uint) (md []*Metadata, result *gorm.DB)
-	InsertMetadata(md *Metadata) (*Metadata, *gorm.DB)
-	DeleteMetadata(id uint) (result *gorm.DB)
+	GetMetadataById(uint) (Metadata, *gorm.DB)
+	GetAllMetadata(int, int, *string, uint, uint) ([]*Metadata, *gorm.DB)
+	InsertMetadata(*Metadata) (*Metadata, *gorm.DB)
+	DeleteMetadata(uint) (*gorm.DB)
+	DeleteSpecificMetadata(*[]string) (*gorm.DB)
 }
 
 type Metadata struct {
 	gorm.Model
 	// ImageRef uint
 	// Image    Image `gorm:"foreignKey:ImageRef"`
-	ImageId uint
-	Rating  uint
+	ImageId uint `gorm:"not null;check:image_id <> '';check:image_id > 0;unique"`
+	Rating  uint `gorm:"not null;check:rating <> '';check:rating >= 0;check:rating <= 5"`
 }
 
 // type Image struct {
@@ -24,6 +25,6 @@ type Metadata struct {
 // }
 
 type InsertMetadataPayload struct {
-	ImageId uint
-	Rating  uint
+	ImageId uint `json:"imageId"`
+	Rating  uint `json:"rating"`
 }

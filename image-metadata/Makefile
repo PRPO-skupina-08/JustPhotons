@@ -8,11 +8,13 @@ gotest: build
 	@go test -v ./...
 
 httptest: build
-	./bin/img-file-service &
-	cd /tests/
-	hurl test.hurl
-	cd ..
-	kill %1
+	@./bin/img-file-service & \
+	server_pid=$$!; \
+	{ cd ./tests/ && hurl test.hurl && [ "$$?" -eq 0 ] && echo "TESTING PASSED" || echo "TESTING FAILED"; } || true; \
+	kill $$server_pid
+
+migrate: build
+	@go run cmd/migrate/migrate.go
 
 run: build
 	./bin/img-file-service

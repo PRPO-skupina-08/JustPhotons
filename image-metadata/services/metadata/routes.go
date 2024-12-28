@@ -41,6 +41,7 @@ func (h *Handler) CreateRoutes(parentRouter *chi.Mux) {
 	subrouter.Get("/", h.handleGetAllMetadata)
 	subrouter.Post("/", h.handlePostMetadata)
 	subrouter.Delete("/{id}", h.handleDeleteMetadata)
+	subrouter.Delete("/", h.handleDeleteSpecificMetadata)
 }
 
 func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
@@ -54,6 +55,7 @@ func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 	img, result := h.store.GetMetadataById(uint(id))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+		return
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
 		return
@@ -97,6 +99,7 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 	md, result := h.store.GetAllMetadata(int(limit), int(offset), orderBy, uint(imageID), uint(rating))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+		return
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("No images found! error: %v", result.Error))
 		return
@@ -135,11 +138,12 @@ func (h *Handler) handlePostMetadata(w http.ResponseWriter, r *http.Request) {
 
 	// create new image
 	md, result := h.store.InsertMetadata(&types.Metadata{
-        ImageId: payload.ImageId,
-        Rating: payload.Rating,
+		ImageId: payload.ImageId,
+		Rating:  payload.Rating,
 	})
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB post result is nil"))
+		return
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusInternalServerError, result.Error)
 		return
@@ -149,7 +153,64 @@ func (h *Handler) handlePostMetadata(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleDeleteMetadata(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	paramId := chi.URLParam(r, "id")
+	id, err := strconv.ParseUint(paramId, 10, 64)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	if result := h.store.DeleteMetadata(uint(id)); result == nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+		return
+	} else if result.Error != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Metadata with ID %v doesn't exist. Error: %v", id, result.Error))
+		return
+	} else if result.RowsAffected == 0 {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Metadata with ID %v doesn't exist (rows affected == 0).", id))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusNoContent, nil)
+}
+
+func (h *Handler) handleDeleteSpecificMetadata(w http.ResponseWriter, r *http.Request) {
+	var whereClauses []string = make([]string, 0)
+
+    imageID, err := getURLQuery(r, "image_id", parseUintWrapper(), 0)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+	if imageID != 0 {
+		whereClauses = append(whereClauses, "image_id = "+strconv.FormatUint(imageID, 10))
+	}
+
+	rating, err := getURLQuery(r, "rating", parseUintWrapper(), 0)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+	if rating != 0 {
+		whereClauses = append(whereClauses, "rating = "+strconv.FormatUint(rating, 10))
+	}
+
+	if len(whereClauses) <= 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Result too broad! Please constrain at least one of either imageID or rating"))
+		return
+	}
+
+	if result := h.store.DeleteSpecificMetadata(&whereClauses); result == nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+		return
+	} else if result.Error != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Metadata with specified parameters doesn't exist. Error: %v", result.Error))
+		return
+	} else if result.RowsAffected == 0 {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Metadata with specified parameters doesn't exist (rows affected == 0)."))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusNoContent, nil)
 }
 
 func getURLQuery[T any](r *http.Request, parameter string, convertFunc func(string) (T, error), defaultVal T) (converted T, err error) {
