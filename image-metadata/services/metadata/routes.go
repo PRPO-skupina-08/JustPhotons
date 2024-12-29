@@ -48,10 +48,10 @@ func (h *Handler) CreateRoutes(parentRouter *chi.Mux) {
 // GetMetadata godoc
 //
 //	@Summary		Get single Metadata entry
-//	@Description	retrieves a specific metadata entry based on its ID.
+//	@Description	Retrieves a specific metadata entry based on its ID.
 //	@Tags			metadata
 //	@Produce		json
-//	@Param			id	path		uint			true	"Metadata entry ID"
+//	@Param			id	path		uint			true	"Metadata entry ID"	example(42)
 //	@Success		200	{object}	types.Metadata	"Matching entry"
 //	@Failure		400	{object}	error			"Incorrect input"
 //	@Failure		404	{object}	error			"No results"
@@ -80,22 +80,28 @@ func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 // GetAllMetadata godoc
 //
 //	@Summary		Get many Metadata entries
-//	@Description	retrieves many metadata entries based on its query parameters.
+//	@Description	Retrieves many metadata entries based on its query parameters.
 //	@Tags			metadata
 //	@Produce		json
-//	@Param			limit	query		uint			false	"Maximum amount of returned entries (>0)"
-//	@Param			offset	query		uint			false	"Amount of entries left out at the start"
-//	@Param			sort	query		string			false	"SQL sorting in with pattern `<field>:<order>[,]...`, first pattern does primary sort, second pattern secondary sort etc."
-//	@Param			rating	query		uint			false	"Image rating, between 0 and 5 (inclusive)"
-//	@Success		200		{object}	types.Metadata	"Matching entry"
-//	@Failure		400		{object}	error			"Incorrect input"
-//	@Failure		404		{object}	error			"No results"
-//	@Failure		500		{object}	error			"Internal server error"
+//	@Param			limit		query		uint			false	"Maximum amount of returned entries (>0). To be used with `offset` in order to achieve pagination."							example(20)
+//	@Param			offset		query		uint			false	"Amount of entries left out at the start. To be used with `limit` in order to achieve pagination."							example(10)
+//	@Param			sort		query		string			false	"SQL sorting in with pattern `<field>:<order>[,]...`, first pattern does primary sort, second pattern secondary sort etc."	example(rating:asc,image_id:desc)
+//	@Param			image_id	query		uint			false	"The ID of the image to which the metadata entry belongs."																	example(42)
+//	@Param			rating		query		uint			false	"Image rating, between 0 and 5 (inclusive)"																					example(4)	minimum(0)	maximum(5)
+//	@Success		200			{object}	types.Metadata	"Matching entry"
+//	@Failure		400			{object}	error			"Incorrect input"
+//	@Failure		404			{object}	error			"No results"
+//	@Failure		500			{object}	error			"Internal server error"
 //	@Router			/metadata [get]
 func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 	limit, err := getURLQuery(r, "limit", parseUintWrapper(), 20)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+    // TODO: do this with the validate library.
+	if limit <= 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Limit cannot be 0!"))
 		return
 	}
 
@@ -139,11 +145,11 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 // PostMetadata godoc
 //
 //	@Summary		Insert/create a new Metadata entry
-//	@Description	creates a new metadata entry in the database
+//	@Description	Creates a new metadata entry in the database
 //	@Tags			metadata
 //	@Accept			json
 //	@Produce		json
-//	@Param			metadata	body		types.InsertMetadataPayload	true	"Insert metadata payload"
+//	@Param			metadata	body		types.InsertMetadataPayload	true	"Insert metadata payload"	example({ "image_id": 42, "rating": 4 })
 //	@Success		201			{object}	types.Metadata				"Successfully created new entry"
 //	@Failure		400			{object}	error						"Incorrect input (missing fields, incorrect data etc.)"
 //	@Failure		500			{object}	error						"Internal server error, but can be caused by database rejecting wrong data (would be a developer's mistake)."
@@ -198,7 +204,7 @@ func (h *Handler) handlePostMetadata(w http.ResponseWriter, r *http.Request) {
 //	@Description	Deletes a specific metadata entry based on its ID.
 //	@Tags			metadata
 //	@Produce		json
-//	@Param			id	path		uint	true	"Metadata entry ID"
+//	@Param			id	path		uint	true	"Metadata entry ID"	example(42)
 //	@Success		204	{object}	nil		"Sucessfully deleted"
 //	@Failure		400	{object}	error	"Incorrect input"
 //	@Failure		404	{object}	error	"Nothing to delete"
@@ -228,12 +234,12 @@ func (h *Handler) handleDeleteMetadata(w http.ResponseWriter, r *http.Request) {
 // DeleteSpecificMetadata godoc
 //
 //	@Summary		Delete many Metadata entries
-//	@Description	deletes many metadata entries based on its query parameters. **At least one paramater must be present!**
+//	@Description	Deletes many metadata entries based on its query parameters. **At least one paramater must be present!**
 //	@Tags			metadata
 //	@Produce		json
-//	@Param			image_id	query		uint	false	"Image ID (not the metadata entry's ID)"
-//	@Param			rating		query		uint	false	"Image rating, between 0 and 5 (inclusive)"
-//	@Success		204			{object}	nil		"Matching entry"
+//	@Param			image_id	query		uint	false	"Image ID (not the metadata entry's ID)"	example(42)
+//	@Param			rating		query		uint	false	"Image rating, between 0 and 5 (inclusive)"	example(4)
+//	@Success		204			{object}	nil		"Sucessfully deleted"
 //	@Failure		400			{object}	error	"Incorrect input"
 //	@Failure		400			{object}	error	"Neither `image_id` nor `rating` specified, but at least one is needed"
 //	@Failure		404			{object}	error	"No results"

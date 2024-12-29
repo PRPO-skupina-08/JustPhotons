@@ -20,6 +20,7 @@ migrate: build
 	@go run cmd/migrate/migrate.go
 
 swagger: build
+	@swag f
 	@swag init -d "./cmd,./services/metadata,./types,./utils" -g api/api.go -o cmd/docs
 
 run: build swagger
