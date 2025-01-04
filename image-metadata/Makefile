@@ -13,7 +13,7 @@ httptest: build
 	{ cd ./tests/ && hurl test.hurl && [ "$$?" -eq 0 ] && echo "TESTING PASSED" || echo "TESTING FAILED"; } || true; \
 	kill $$server_pid
 
-test: build gotest httptest
+test: gotest httptest
 	@echo "Tests completed."
 
 migrate: build

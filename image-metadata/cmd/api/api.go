@@ -1,7 +1,8 @@
 package api
 
 import (
-	"image-service/services/images"
+	"image-metadata/config"
+	"image-metadata/services/metadata"
 	"log"
 	"net/http"
 
@@ -16,13 +17,13 @@ import (
  */
 type APIServer struct {
 	addr string
-    db *gorm.DB
+	db   *gorm.DB
 }
 
 func NewAPIServer(addr string, db *gorm.DB) *APIServer {
 	return &APIServer{
 		addr: addr,
-        db: db,
+		db:   db,
 	}
 }
 
@@ -30,15 +31,15 @@ func NewAPIServer(addr string, db *gorm.DB) *APIServer {
 func (s *APIServer) Run() error {
 	// Creates router_prefix
 	router_prefix := chi.NewRouter()
-    router := chi.NewRouter()
-    router_prefix.Mount("/api/v1", router)
+	router := chi.NewRouter()
+	router_prefix.Mount(config.APIVersion, router)
 
 	// Register / add endpoints (services), controller == handler
-    imageStore := images.NewStore(s.db) // prepare for dependency injection
-    imagesHandler := images.NewHandler(imageStore) // create the controller and inject the dependency
-    imagesHandler.CreateRoutes(router)
+	metadataStore := metadata.NewStore(s.db)              // prepare for dependency injection
+	metadataHandler := metadata.NewHandler(metadataStore) // create the controller and inject the dependency
+	metadataHandler.CreateRoutes(router)
 
-    // For frontend.
+	// For frontend.
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:5173"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE"},
