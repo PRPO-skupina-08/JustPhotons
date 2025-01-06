@@ -1,1 +1,3 @@
-<button class="organisation-button">{{organisation.name}}</button>
+<button class="organisation-button" [routerLink]="['/organisations', organisation.id]">
+    {{organisation.name}}
+</button>
