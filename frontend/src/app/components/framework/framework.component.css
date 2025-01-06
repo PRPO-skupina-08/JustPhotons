@@ -1,0 +1,6 @@
+.content {
+    padding: 40px;
+    padding-left: calc(var(--sidebar-width) + 40px);
+    background-color: var(--bg-neutral);
+    min-height: 100vh;
+}
