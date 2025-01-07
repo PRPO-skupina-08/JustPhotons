@@ -4,22 +4,16 @@ import "gorm.io/gorm"
 
 type MetadataStore interface {
 	GetPermissionById(uint) (Permission, *gorm.DB)
-	GetSpecificPermission(limit int, offset int, orgId uint) ([]*Permission, *gorm.DB)
-    GetPermissionFromUser(limit int, offset int) ([]*User, *gorm.DB)
+	GetSpecificPermission(limit int, offset int, orgId uint, userId uint) ([]*Permission, *gorm.DB)
 	InsertPermission(*Permission) (*Permission, *gorm.DB)
 	DeletePermission(uint) *gorm.DB
-	UpdatePermission(id uint, p *Permission) *gorm.DB
+	DeleteSpecificPermission(userId uint64, orgId uint64) (*gorm.DB)
 }
 
 type Permission struct {
 	gorm.Model
-	OrgId   uint   `gorm:"not null;check:org_id <> '';check:org_id > 0;unique"`
-	UserIds []User `gorm:"foreignKey:UserRefer"`
-}
-
-type User struct {
-	gorm.Model
-    UserRefer uint
+	OrgId  uint `gorm:"not null;check:org_id <> '';check:org_id > 0"`
+	UserId uint `gorm:"not null;check:user_id <> '';check:user_id > 0"`
 }
 
 type InsertPermissionPayload struct {

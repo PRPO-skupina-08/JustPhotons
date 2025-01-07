@@ -12,7 +12,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"gorm.io/gorm"
 )
 
 type Handler struct {
@@ -37,6 +36,7 @@ func (h *Handler) CreateRoutes(parentRouter *chi.Mux) {
 	subrouter.Get("/", h.handleGetSpecificPermission)
 	subrouter.Post("/", h.handlePostPermission)
 	subrouter.Delete("/{id}", h.handleDeletePermission)
+	subrouter.Delete("/", h.handleDeleteSpecificPermission)
 }
 
 func (h *Handler) handleGetPermissions(w http.ResponseWriter, r *http.Request) {
@@ -84,26 +84,7 @@ func (h *Handler) handleGetSpecificPermission(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	var p []*types.Permission
-	var result *gorm.DB
-
-	if userId > 0 && orgId > 0 {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Can only have one of user_id or org_id!"))
-		return
-	} else if userId > 0 {
-		usr, result := h.store.GetPermissionFromUser(int(limit), int(offset))
-		if result == nil {
-			utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
-			return
-		} else if result.Error != nil {
-			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("No images found! error: %v", result.Error))
-			return
-		}
-		utils.WriteJSON(w, http.StatusOK, usr)
-		return
-	}
-
-	p, result = h.store.GetSpecificPermission(int(limit), int(offset), uint(orgId))
+	p, result := h.store.GetSpecificPermission(int(limit), int(offset), uint(orgId), uint(userId))
 
 	// check if image exists
 	if result == nil {
@@ -135,40 +116,21 @@ func (h *Handler) handlePostPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingPermission, result := h.store.GetSpecificPermission(-1, -1, payload.OrgId)
+	existingPermission, result := h.store.GetSpecificPermission(-1, -1, payload.OrgId, payload.OrgId)
 	if result.Error != nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Failed to fetch permission: %v", result.Error))
 		return
 	}
 
-	nu := newUser(payload.UserId)
-
 	if existingPermission != nil && len(existingPermission) > 0 {
-		ep := existingPermission[0]
-		// Update UserIds if the entry already exists
-		contains := false
-		for _, i := range ep.UserIds {
-			if i.ID == payload.UserId {
-				contains = true
-				break
-			}
-		}
-
-		if contains {
-			ep.UserIds = append(ep.UserIds, nu)
-			if err := h.store.UpdatePermission(existingPermission[0].ID, existingPermission[0]); err != nil {
-				utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Failed to update permission: %v", err))
-				return
-			}
-		}
-		utils.WriteJSON(w, http.StatusOK, existingPermission)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("This org_id and user_id combination already exists."))
 		return
 	}
 
 	// create new permission entry
 	md, result := h.store.InsertPermission(&types.Permission{
-		OrgId:   payload.OrgId,
-		UserIds: []types.User{nu},
+		OrgId:  payload.OrgId,
+		UserId: payload.UserId,
 	})
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB post result is nil"))
@@ -196,6 +158,38 @@ func (h *Handler) handleDeletePermission(w http.ResponseWriter, r *http.Request)
 		return
 	} else if result.RowsAffected == 0 {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Metadata with ID %v doesn't exist (rows affected == 0).", id))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusNoContent, nil)
+}
+
+func (h *Handler) handleDeleteSpecificPermission(w http.ResponseWriter, r *http.Request) {
+	orgId, err := getURLQuery(r, "org_id", parseUintWrapper(), 0)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userId, err := getURLQuery(r, "user_id", parseUintWrapper(), 0)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if orgId == 0 && userId == 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Result too broad! Please constrain at least one of either imageID or rating"))
+		return
+	}
+
+	if result := h.store.DeleteSpecificPermission(userId, orgId); result == nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+		return
+	} else if result.Error != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Metadata with specified parameters doesn't exist. Error: %v", result.Error))
+		return
+	} else if result.RowsAffected == 0 {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Metadata with specified parameters doesn't exist (rows affected == 0)."))
 		return
 	}
 
@@ -254,12 +248,4 @@ func parseSortParams(input string) (*string, error) {
 	}
 
 	return &result, nil
-}
-
-func newUser(id uint) types.User {
-	return types.User{
-		Model: gorm.Model{
-			ID: id,
-		},
-	}
 }

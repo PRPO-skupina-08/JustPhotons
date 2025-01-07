@@ -1,8 +1,10 @@
 package permissions
 
 import (
+	"fmt"
 	"log"
 	"permission-check/types"
+	"strconv"
 
 	"gorm.io/gorm"
 )
@@ -20,12 +22,7 @@ func (s *Store) GetPermissionById(id uint) (p types.Permission, result *gorm.DB)
 	return
 }
 
-func (s *Store) GetPermissionFromUser(limit int, offset int) (users []*types.User, result *gorm.DB) {
-	result = s.db.Limit(limit).Offset(offset).Preload("UserIds").Find(&users)
-	return
-}
-
-func (s *Store) GetSpecificPermission(limit int, offset int, orgId uint) (p []*types.Permission, result *gorm.DB) {
+func (s *Store) GetSpecificPermission(limit int, offset int, orgId uint, userId uint) (p []*types.Permission, result *gorm.DB) {
 	result = s.db.Limit(limit).Offset(offset)
 
 	if orgId > 0 {
@@ -51,8 +48,33 @@ func (s *Store) DeletePermission(id uint) (result *gorm.DB) {
 	return
 }
 
-func (s *Store) UpdatePermission(id uint, p *types.Permission) (result *gorm.DB) {
-	p.ID = id
-	result = s.db.Save(p)
+func (s *Store) DeleteSpecificPermission(userId uint64, orgId uint64) (result *gorm.DB) {
+    var whereClauses []string = make([]string, 0)
+
+	if userId != 0 {
+		whereClauses = append(whereClauses, "user_id = "+strconv.FormatUint(userId, 10))
+	}
+	if orgId != 0 {
+		whereClauses = append(whereClauses, "org_id = "+strconv.FormatUint(orgId, 10))
+	}
+
+	log.Printf("Starting specific delete...")
+	if whereClauses == nil || len(whereClauses) == 0 {
+		result = &gorm.DB{
+			Error: fmt.Errorf("Result too broad! Please constrain at least one of either imageID or rating"),
+		}
+		return
+	}
+
+	result = s.db
+	for _, i := range whereClauses {
+		log.Printf("Adding the where clause: \"%s\"\n", i)
+		result = result.Where(i)
+	}
+
+	log.Printf("All where clauses added.\n")
+
+	result = result.Unscoped().Delete(&types.Permission{})
+	log.Printf("gorm.DB: error: \"%s\", rows affected: \"%d\"\n", result.Error, result.RowsAffected)
 	return
 }
