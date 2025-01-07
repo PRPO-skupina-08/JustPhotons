@@ -1,62 +1,48 @@
-POST http://localhost:8080/api/v1/metadata
+POST http://localhost:8080/api/v1/permissions
 {
-    "image_id": 19,
-    "rating": 5
+    "org_id": 19,
+    "user_id": 5
 }
 HTTP 201
 
-POST http://localhost:8080/api/v1/metadata
+POST http://localhost:8080/api/v1/permissions
 {
-    "image_id": 23,
-    "rating": 3
+    "org_id": 23,
+    "user_id": 3
 }
 HTTP 201
 
-POST http://localhost:8080/api/v1/metadata
+POST http://localhost:8080/api/v1/permissions
 {
-    "image_id": 24,
-    "rating": 3
+    "org_id": 24,
+    "user_id": 3
 }
 HTTP 201
 
-POST http://localhost:8080/api/v1/metadata
+POST http://localhost:8080/api/v1/permissions
 {
-    "image_id": 22,
-    "rating": 3
+    "org_id": 22,
+    "user_id": 3
 }
 HTTP 201
 
-POST http://localhost:8080/api/v1/metadata
+POST http://localhost:8080/api/v1/permissions
 {
-    "image_id": 26,
-    "rating": 0
+    "org_id": 26,
+    "user_id": 0
 }
-HTTP 201
+HTTP 400
+
+POST http://localhost:8080/api/v1/permissions
+{
+    "org_id": 0,
+    "user_id": 26
+}
+HTTP 400
 
 ############################################
-GET http://localhost:8080/api/v1/metadata
+GET http://localhost:8080/api/v1/permissions
 [Options]
 output: -
 HTTP 200
 ############################################
-
-DELETE http://localhost:8080/api/v1/metadata
-[Options]
-output: -
-[QueryStringParams]
-image_id: 19
-HTTP 204
-
-DELETE http://localhost:8080/api/v1/metadata
-[Options]
-output: -
-[QueryStringParams]
-image_id: 26
-HTTP 204
-
-DELETE http://localhost:8080/api/v1/metadata
-[Options]
-output: -
-[QueryStringParams]
-rating: 3
-HTTP 204

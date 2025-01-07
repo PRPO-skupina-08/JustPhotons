@@ -10,7 +10,7 @@ gotest: build
 httptest: build
 	@./bin/img-file-service & \
 	server_pid=$$!; \
-	{ cd ./tests/ && hurl test.hurl && [ "$$?" -eq 0 ] && echo "TESTING PASSED" || echo "TESTING FAILED"; } || true; \
+	{ cd ./tests/ && hurl test.hurl --verbose && [ "$$?" -eq 0 ] && echo "TESTING PASSED" || echo "TESTING FAILED"; } || true; \
 	kill $$server_pid
 
 test: gotest httptest

@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 	"net/http"
+	"permission-check/cmd/health"
 	"permission-check/config"
 	"permission-check/services/permissions"
 
@@ -38,6 +39,9 @@ func (s *APIServer) Run() error {
 	permissionStore := permissions.NewStore(s.db)                // prepare for dependency injection
 	permissionHandler := permissions.NewHandler(permissionStore) // create the controller and inject the dependency
 	permissionHandler.CreateRoutes(router)
+
+    // Healthcheck
+    router.Get("/healthcheck", health.HealthCheckHandler)
 
 	// For frontend.
 	c := cors.New(cors.Options{

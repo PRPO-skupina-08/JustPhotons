@@ -43,10 +43,12 @@ func run_action(actionName *string) {
 
 func migrate(db *gorm.DB) {
 	db.AutoMigrate(&types.Permission{})
+	db.AutoMigrate(&types.User{})
 }
 
 func drop(db *gorm.DB) {
 	db.Migrator().DropTable(&types.Permission{})
+	db.Migrator().DropTable(&types.User{})
 }
 
 func main() {

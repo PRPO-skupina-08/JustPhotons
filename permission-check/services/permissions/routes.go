@@ -7,12 +7,12 @@ import (
 	"permission-check/types"
 	"permission-check/utils"
 	"regexp"
-	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"gorm.io/gorm"
 )
 
 type Handler struct {
@@ -84,8 +84,28 @@ func (h *Handler) handleGetSpecificPermission(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	var p []*types.Permission
+	var result *gorm.DB
+
+	if userId > 0 && orgId > 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Can only have one of user_id or org_id!"))
+		return
+	} else if userId > 0 {
+		usr, result := h.store.GetPermissionFromUser(int(limit), int(offset))
+		if result == nil {
+			utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
+			return
+		} else if result.Error != nil {
+			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("No images found! error: %v", result.Error))
+			return
+		}
+		utils.WriteJSON(w, http.StatusOK, usr)
+		return
+	}
+
+	p, result = h.store.GetSpecificPermission(int(limit), int(offset), uint(orgId))
+
 	// check if image exists
-	md, result := h.store.GetSpecificPermission(int(limit), int(offset), uint(orgId), uint(userId))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
 		return
@@ -94,7 +114,7 @@ func (h *Handler) handleGetSpecificPermission(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, md)
+	utils.WriteJSON(w, http.StatusOK, p)
 }
 
 func (h *Handler) handlePostPermission(w http.ResponseWriter, r *http.Request) {
@@ -115,16 +135,27 @@ func (h *Handler) handlePostPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingPermission, err := h.store.GetSpecificPermission(1, 0, payload.OrgId, 0)
-	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Failed to fetch permission: %v", err))
+	existingPermission, result := h.store.GetSpecificPermission(-1, -1, payload.OrgId)
+	if result.Error != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Failed to fetch permission: %v", result.Error))
 		return
 	}
 
+	nu := newUser(payload.UserId)
+
 	if existingPermission != nil && len(existingPermission) > 0 {
+		ep := existingPermission[0]
 		// Update UserIds if the entry already exists
-		if slices.Contains(existingPermission[0].UserIds, payload.UserId) {
-			existingPermission[0].UserIds = append(existingPermission[0].UserIds, payload.UserId)
+		contains := false
+		for _, i := range ep.UserIds {
+			if i.ID == payload.UserId {
+				contains = true
+				break
+			}
+		}
+
+		if contains {
+			ep.UserIds = append(ep.UserIds, nu)
 			if err := h.store.UpdatePermission(existingPermission[0].ID, existingPermission[0]); err != nil {
 				utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Failed to update permission: %v", err))
 				return
@@ -137,7 +168,7 @@ func (h *Handler) handlePostPermission(w http.ResponseWriter, r *http.Request) {
 	// create new permission entry
 	md, result := h.store.InsertPermission(&types.Permission{
 		OrgId:   payload.OrgId,
-		UserIds: []uint{payload.UserId},
+		UserIds: []types.User{nu},
 	})
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB post result is nil"))
@@ -223,4 +254,12 @@ func parseSortParams(input string) (*string, error) {
 	}
 
 	return &result, nil
+}
+
+func newUser(id uint) types.User {
+	return types.User{
+		Model: gorm.Model{
+			ID: id,
+		},
+	}
 }

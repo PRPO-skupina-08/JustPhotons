@@ -20,19 +20,19 @@ func (s *Store) GetPermissionById(id uint) (p types.Permission, result *gorm.DB)
 	return
 }
 
-func (s *Store) GetSpecificPermission(limit int, offset int, orgId uint, userID uint) (p []*types.Permission, result *gorm.DB) {
+func (s *Store) GetPermissionFromUser(limit int, offset int) (users []*types.User, result *gorm.DB) {
+	result = s.db.Limit(limit).Offset(offset).Preload("UserIds").Find(&users)
+	return
+}
+
+func (s *Store) GetSpecificPermission(limit int, offset int, orgId uint) (p []*types.Permission, result *gorm.DB) {
 	result = s.db.Limit(limit).Offset(offset)
-	var users []uint
 
 	if orgId > 0 {
 		result = result.Where(&types.Permission{OrgId: orgId})
 	}
 
-	if userID > 0 {
-		result = result.Preload("UserIds").Find(&users)
-	} else {
-		result.Find(&p)
-	}
+	result.Find(&p)
 	return
 }
 
@@ -52,7 +52,7 @@ func (s *Store) DeletePermission(id uint) (result *gorm.DB) {
 }
 
 func (s *Store) UpdatePermission(id uint, p *types.Permission) (result *gorm.DB) {
-    p.ID = id
-    result = s.db.Save(p)
-    return
+	p.ID = id
+	result = s.db.Save(p)
+	return
 }

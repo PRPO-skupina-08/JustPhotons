@@ -3,6 +3,11 @@ POST http://localhost:8080/api/v1/metadata
     "org_id": 8,
     "user_id": 5
 }
+POST http://localhost:8080/api/v1/metadata
+{
+    "org_id": 8,
+    "user_id": 6
+}
 # HTTP 201
 
 POST http://localhost:8080/api/v1/metadata

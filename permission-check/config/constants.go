@@ -2,5 +2,5 @@ package config
 
 const (
 	APIVersion = "/api/v1"
-	Subroute   = "/metadata"
+	Subroute   = "/permissions"
 )
