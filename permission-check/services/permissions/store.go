@@ -61,7 +61,7 @@ func (s *Store) DeleteSpecificPermission(userId uint64, orgId uint64) (result *g
 	log.Printf("Starting specific delete...")
 	if whereClauses == nil || len(whereClauses) == 0 {
 		result = &gorm.DB{
-			Error: fmt.Errorf("Result too broad! Please constrain at least one of either imageID or rating"),
+			Error: fmt.Errorf("Result too broad! Please constrain at least one of either user_id or org_id"),
 		}
 		return
 	}

@@ -22,22 +22,21 @@ make run
 
 ## API (REST)
 Due to early development phase of this app, the current API is as follows:
-- `GET /api/v1/metadata/{id}` - retrieves a specific metadata entry based on its
-ID.
-- `GET /api/v1/metadata?...` - retrieves many metadata entries. Can have query
-parameters.
-- `POST /api/v1/metadata` - create metadata. Required fields: `image_id` and
-`rating`.
-- `DELETE /api/v1/metadata/{id}` - delete metadata entry based on its ID.
-- `DELETE /api/v1/metadata?...` - delete many metadata entries. Can have query
-parameters.
+- `GET /api/v1/permissions/{id}` - retrieves a specific permissions entry based
+on its ID.
+- `GET /api/v1/permissions?...` - retrieves many permissions entries. Can have
+query parameters.
+- `POST /api/v1/permissions` - create permissions.
+- `DELETE /api/v1/permissions/{id}` - delete permissions entry based on its ID.
+- `DELETE /api/v1/permissions?...` - delete many permissions entries. Can have
+query parameters.
 
 These are the available query parameters for the functions that allow them:
 - `limit` - integer - the maximum amount of entries to retrieve.
 - `offset` - integer - the amount of entries at the start to leave out.
-- `sort` - string - the sorting parameters. Pattern: `<field>:<order>[,]...`
-- `image_id` - integer - the ID of the image to which the metadata belongs.
-- `rating` - integer - rating between 0 and 5 (inclusive)
+- `org_id` - integer - the ID of the organization to which the permission 
+belongs.
+- `user_id` - integer - the ID of the user to which the permission belongs.
 
 ## Developer notes
 
@@ -54,7 +53,7 @@ mariadb -h 172.17.0.2 -u root -p
 ```
 
 Useful commands:
-- `USE image_files`
+- `USE <database name>`
 - `SHOW tables`
 - `SELECT * from <table>`
 - `DROP TABLE <table>`
@@ -83,7 +82,7 @@ to drop the currently existing table in the database.
 For testing, **make sure you have [Hurl](https://hurl.dev/) installed**.
 
 To test the application (that is, the specific services of the application, in
-this case there is only the `images` service), run this command:
+this case there is only the `permissions` service), run this command:
 ```bash
 make test
 ```

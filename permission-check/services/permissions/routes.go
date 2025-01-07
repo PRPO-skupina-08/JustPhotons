@@ -46,13 +46,13 @@ func (h *Handler) handleGetPermissions(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, err)
 	}
 
-	// retrieve image / check if image exists
+	// retrieve permission / check if permission exists
 	img, result := h.store.GetPermissionById(uint(id))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
 		return
 	} else if result.Error != nil {
-		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Permission with ID %v doesn't exist. Error: %v", id, result.Error))
 		return
 	}
 
@@ -86,12 +86,12 @@ func (h *Handler) handleGetSpecificPermission(w http.ResponseWriter, r *http.Req
 
 	p, result := h.store.GetSpecificPermission(int(limit), int(offset), uint(orgId), uint(userId))
 
-	// check if image exists
+	// check if permission exists
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
 		return
 	} else if result.Error != nil {
-		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("No images found! error: %v", result.Error))
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("No permissions found! error: %v", result.Error))
 		return
 	}
 
@@ -178,7 +178,7 @@ func (h *Handler) handleDeleteSpecificPermission(w http.ResponseWriter, r *http.
 	}
 
 	if orgId == 0 && userId == 0 {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Result too broad! Please constrain at least one of either imageID or rating"))
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Result too broad! Please constrain at least one of either org_id or user_id!"))
 		return
 	}
 
