@@ -11,6 +11,11 @@ export const routes: Routes = [
     },
     {
         path: 'organisations/:id',
+        pathMatch: 'full',
+        redirectTo: 'organisations/:id',
+    },
+    {
+        path: 'organisations/:id',
         component: OrganisationComponent,
         canActivate: [],
     },
