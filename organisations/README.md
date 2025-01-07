@@ -5,7 +5,7 @@
 In `/organisations` directory run:
 ```bash
 docker build -t organisations .
-docker run -p 8080:8080 organisations
+docker run -p 8082:8082 organisations
 ```
 
 ## API endpoints
