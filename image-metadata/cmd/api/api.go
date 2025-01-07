@@ -6,10 +6,12 @@ import (
 	"log"
 	"net/http"
 
+	_ "image-metadata/cmd/docs"
+	"image-metadata/cmd/health"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
-    _ "image-metadata/cmd/docs"
 
 	"gorm.io/gorm"
 )
@@ -47,6 +49,9 @@ func (s *APIServer) Run() error {
 	metadataHandler.CreateRoutes(router)
 
     router.Mount("/docs", httpSwagger.WrapHandler)
+
+    // Healthcheck
+    router.Get("/healthcheck", health.HealthCheckHandler)
 
 	// For frontend.
 	c := cors.New(cors.Options{
