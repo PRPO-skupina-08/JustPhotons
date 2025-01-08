@@ -4,6 +4,8 @@ import java.util.List;
 
 import java.util.Optional;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -26,7 +28,7 @@ public class UsersBean {
             User user = new User();
             user.setEmail(registrationEssentials.getEmail());
             user.setUsername(registrationEssentials.getUsername());
-            user.setPassword(registrationEssentials.getPassword());
+            user.setPassword(passwordEncoder().encode(registrationEssentials.getPassword()));
             User al = usersRepository.save(user);
             return al;
         }
@@ -52,5 +54,12 @@ public class UsersBean {
             return user;
         }
         return null;
+    }
+
+
+    /* Helper functions */
+
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
