@@ -40,7 +40,6 @@ public class RegisterResource {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-
 	/*
 	 * Error handlers 
 	 */

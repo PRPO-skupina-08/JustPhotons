@@ -16,8 +16,4 @@ public interface UsersRepository extends JpaRepository<User, Long> {
 
     // @Query("SELECT a FROM Album a WHERE a.organisation.id = ?1")
     // List<Album> getByOrganisationIdPaged(Long orgId, Pageable pageable);
-    
-    @Query("SELECT u FROM User u WHERE u.username = :username")
-    public User getUserByUsername(@Param("username") String username);
-
 }
