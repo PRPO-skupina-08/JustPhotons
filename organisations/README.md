@@ -22,6 +22,13 @@ Returns: List of all organisations as `OrganisationEssentials`.
 Expects: Body = valid (no id/albums) `Organisation`
 Returns: created `Organisation`.
 
+### /organisations/essentials/:orgId
+
+### GET
+
+Expects: Valid orgId
+Returns: organisation with orgId as `OrganisationEssentials`.
+
 ### /organisations/:orgId
 
 ### GET

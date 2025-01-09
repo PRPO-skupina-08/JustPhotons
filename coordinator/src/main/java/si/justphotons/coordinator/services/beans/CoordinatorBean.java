@@ -21,13 +21,11 @@ import si.justphotons.coordinator.entities.external.OrganisationEssentials;
 @Service
 public class CoordinatorBean {
 
-    // private static final int ORGANISATIONS_PORT = 8082;
+    @Value("${ORGANISATIONS_URL:http://localhost:8082/v1/organisations}")
+    private String ORGANISATIONS_URL;
 
-    // @Value("${ORGANISATIONS_URL}")
-    private String ORGANISATIONS_URL = "http://localhost:8082/v1/organisations";
-
-    // @Value("${USERS_URL}")
-    private String USERS_URL = "http://localhost:8081/v1/users";
+    @Value("${USERS_URL:http://localhost:8081/v1/users}")
+    private String USERS_URL;
 
 
     public List<OrganisationEssentials> getOrganisations(Long userId) {
