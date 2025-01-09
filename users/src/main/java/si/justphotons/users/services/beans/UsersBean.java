@@ -12,17 +12,21 @@ import jakarta.transaction.Transactional;
 import si.justphotons.users.api.v1.dtos.RegistrationEssentials;
 import si.justphotons.users.entities.User;
 import si.justphotons.users.entities.UsersRepository;
+import si.justphotons.users.jwt.JwtUtils;
 
 @Service
 public class UsersBean {
     UsersRepository usersRepository;
+    JwtUtils jwtUtils;
 
-    public UsersBean(UsersRepository u) {
+    public UsersBean(UsersRepository u, JwtUtils j) {
         this.usersRepository = u;
+        this.jwtUtils = j;
     }
 
+    /* returns JWT */
     @Transactional
-    public User register(RegistrationEssentials registrationEssentials) {
+    public String register(RegistrationEssentials registrationEssentials) {
         List<User> users = usersRepository.getByEmail(registrationEssentials.getEmail());
         if (users.size() == 0) {
             User user = new User();
@@ -30,7 +34,10 @@ public class UsersBean {
             user.setUsername(registrationEssentials.getUsername());
             user.setPassword(passwordEncoder().encode(registrationEssentials.getPassword()));
             User al = usersRepository.save(user);
-            return al;
+
+            String jwt = jwtUtils.generateTokenFromUsername(al);
+
+            return jwt;
         }
         return null;
     }

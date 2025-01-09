@@ -31,11 +31,12 @@ public class RegisterResource {
 		this.usersBean = ub;
 	}
 
+	/* returns JWT */
 	@PostMapping
-	public ResponseEntity<User> register(@Valid @RequestBody RegistrationEssentials body) {
-		User user = this.usersBean.register(body);
-		if (user != null) {
-			return new ResponseEntity<>(user, HttpStatus.CREATED);
+	public ResponseEntity<String> register(@Valid @RequestBody RegistrationEssentials body) {
+		String jwt = this.usersBean.register(body);
+		if (jwt != null) {
+			return new ResponseEntity<>(jwt, HttpStatus.CREATED);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
