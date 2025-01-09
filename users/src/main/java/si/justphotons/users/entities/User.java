@@ -31,27 +31,7 @@ public class User{
     @Column(name = "password")
     private String password;
 
-    @Column(name = "enabled")
-    public Boolean enabled;
-
-    public String role = "DEFAULT";
-
-
-    public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
+    
 
 	public Long getId() {
         return id;
