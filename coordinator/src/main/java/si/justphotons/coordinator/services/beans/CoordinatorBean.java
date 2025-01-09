@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
+import si.justphotons.coordinator.entities.external.LoginEssentials;
 import si.justphotons.coordinator.entities.external.Organisation;
 import si.justphotons.coordinator.entities.external.OrganisationEssentials;
 
@@ -24,7 +25,7 @@ public class CoordinatorBean {
     @Value("${ORGANISATIONS_URL:http://localhost:8082/v1/organisations}")
     private String ORGANISATIONS_URL;
 
-    @Value("${USERS_URL:http://localhost:8081/v1/users}")
+    @Value("${USERS_URL:http://localhost:8081/v1}")
     private String USERS_URL;
 
 
@@ -66,15 +67,20 @@ public class CoordinatorBean {
             headers.set("AUTHORIZATION", authHeader);
             HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
-            String url = String.format("%s/id", USERS_URL);
-
-            ResponseEntity<Long> response = restTemplate.exchange(
+            String url = String.format("%s/users/id", USERS_URL);
+            try {
+                ResponseEntity<Long> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 requestEntity,
                 Long.class
             );
             return response.getBody();
+            } catch (Exception e) {
+                System.out.println(e);
+                return null;
+            }
+            
           }
         return null;
     }
@@ -84,6 +90,19 @@ public class CoordinatorBean {
         Organisation response =  restTemplate.getForObject(
             String.format("%s/%d", ORGANISATIONS_URL, id),
             Organisation.class);
+        return response;
+    }
+
+
+    /* for auth */
+
+    public String login(LoginEssentials loginEssentials) {
+        RestTemplate restTemplate = new RestTemplate();
+        String response =  restTemplate.postForObject(
+            String.format("%s/login", USERS_URL),
+            loginEssentials,
+            String.class
+        );
         return response;
     }
 }

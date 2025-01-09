@@ -15,6 +15,10 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface JwtJson {
+  token: string;
+}
+
 export interface JwtPayload {
   id: number;
   username: string;
@@ -36,9 +40,9 @@ export class AuthService {
   login(credentials: LoginRequest) {
     let url : string = `${environment.apiUrl}/login`
 
-    return this.http.post<string>(url, credentials).pipe(
+    return this.http.post<JwtJson>(url, credentials).pipe(
       map((response) => {
-        const token = response;
+        const token = response.token;
         this.setToken(token);
         return token;
       })

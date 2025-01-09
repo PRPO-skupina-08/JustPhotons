@@ -35,7 +35,7 @@ services:
     build: ./coordinator
     environment:
       ORGANISATIONS_URL: http://organisations:8082/v1/organisations
-      USERS_URL: http://users:8081/v1/users
+      USERS_URL: http://users:8081/v1
     restart: always
     ports:
       - "8080:8080"

@@ -26,6 +26,7 @@ export class LoginComponent {
   ) {}
 
   onSubmit() {
+
     if (!this.email || !this.password) {
       return;
     }
