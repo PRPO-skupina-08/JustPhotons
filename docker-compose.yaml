@@ -4,16 +4,26 @@ services:
     image: mariadb
     environment:
       MARIADB_ROOT_PASSWORD: 1234567890
-      MARIADB_DATABASE: organisations
+      MARIADB_DATABASE: justphotons
     ports:
       - "3306:3306"
   
   organisations:
     build: ./organisations
     environment:
-      DATABASE_URL: mariadb://db:3306/organisations
+      DATABASE_URL: mariadb://db:3306/justphotons
     depends_on:
       - db
     restart: always
     ports:
       - "8082:8082"
+
+  users:
+    build: ./users
+    environment:
+      DATABASE_URL: mariadb://db:3306/justphotons
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "8081:8081"
