@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import si.justphotons.coordinator.entities.external.Organisation;
 import si.justphotons.coordinator.entities.external.OrganisationEssentials;
 import si.justphotons.coordinator.services.beans.CoordinatorBean;
@@ -27,11 +28,12 @@ public class OrganisatoinsResource {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<OrganisationEssentials>> getAll() {
+	public ResponseEntity<List<OrganisationEssentials>> getAll(HttpServletRequest request) {
 		// Tle se bo klicalo prej še permission check
 		// jwt here!!
-		Long userId = 1L;
+		Long userId = coordinatorBean.getIdFromJWT(request);
 		List<OrganisationEssentials> essentials = coordinatorBean.getOrganisations(userId); 
+		// System.out.printf("User ID: %d\n", userId);
 		return new ResponseEntity<>(essentials, HttpStatus.OK);
 	}
 

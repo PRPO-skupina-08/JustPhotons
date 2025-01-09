@@ -62,6 +62,15 @@ public class OrganisationsResource {
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
+	
+	@GetMapping("/essentials/{id}")
+	public ResponseEntity<OrganisationEssentials> getOneEssentials(@PathVariable Long id) {
+		OrganisationEssentials org = organisationsBean.getByIdEssentials(id);
+		if (org != null) {
+			return new ResponseEntity<>(org, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Organisation> putOne(@PathVariable Long id, @Valid @RequestBody Organisation entity) {

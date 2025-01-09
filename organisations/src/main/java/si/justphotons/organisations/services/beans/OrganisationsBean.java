@@ -23,7 +23,11 @@ public class OrganisationsBean {
 
   public List<OrganisationEssentials> getAll() {
     List<Organisation> orgs = organisationsRepository.findAll();
-    return convertToEssentials(orgs);
+    List<OrganisationEssentials> ess = new ArrayList<>();
+    for (Organisation org : orgs) {
+      ess.add(convertToEssentials(org));
+    }
+    return ess;
   }
 
   public Organisation insertOne(Organisation organisation) {
@@ -33,6 +37,10 @@ public class OrganisationsBean {
 
   public Organisation getById(Long id) {
     return organisationsRepository.findById(id).orElse(null);
+  }
+
+  public OrganisationEssentials getByIdEssentials(Long id) {
+    return convertToEssentials(organisationsRepository.findById(id).orElse(null));
   }
 
   @Transactional
@@ -65,16 +73,15 @@ public class OrganisationsBean {
   conversion methods
   */ 
 
-  private List<OrganisationEssentials> convertToEssentials(List<Organisation> organisations) {
-    List<OrganisationEssentials> essentials = new ArrayList<>();
-    for (Organisation org : organisations) {
-      OrganisationEssentials ess = new OrganisationEssentials();
-      ess.setId(org.getId());
-      ess.setName(org.getName());
-      essentials.add(ess);
+  private OrganisationEssentials convertToEssentials(Organisation org) {
+    if (org == null) {
+      return null;
     }
+    OrganisationEssentials ess = new OrganisationEssentials();
+    ess.setId(org.getId());
+    ess.setName(org.getName());
 
-    return essentials;
+    return ess;
   }
 
 }
