@@ -29,7 +29,9 @@ public class OrganisatoinsResource {
 	@GetMapping
 	public ResponseEntity<List<OrganisationEssentials>> getAll() {
 		// Tle se bo klicalo prej še permission check
-		List<OrganisationEssentials> essentials = coordinatorBean.getOrganisations(); 
+		// jwt here!!
+		Long userId = 1L;
+		List<OrganisationEssentials> essentials = coordinatorBean.getOrganisations(userId); 
 		return new ResponseEntity<>(essentials, HttpStatus.OK);
 	}
 
