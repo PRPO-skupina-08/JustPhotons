@@ -1,12 +1,11 @@
 package si.justphotons.users.api.v1.dtos;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
-public class RegistrationEssentials {
+public class UserEssentials {
 
+    private Long id;
 
     @NotBlank
     private String username;
@@ -14,8 +13,13 @@ public class RegistrationEssentials {
     @Email(message = "valid email please")
     private String email;
 
-    @Size(min = 8, max = 64, message = "password should be between 8 and 64 characters long")
-    private String password;
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getUsername() {
 		return username;
@@ -32,12 +36,6 @@ public class RegistrationEssentials {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
 }
+
+

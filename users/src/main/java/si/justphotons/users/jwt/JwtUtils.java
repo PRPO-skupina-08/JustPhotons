@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -35,22 +37,33 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateTokenFromUsername(User userDetails) {
-        String username = userDetails.getUsername();
-        // Long id = userDetails.getId();
+    public String generateToken(User userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", userDetails.getUsername());
+        claims.put("id", userDetails.getId());
         return Jwts.builder()
-                .subject(username)
+                .claims(claims)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key())
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser()
+    public Map<String, Object> getUserNameFromJwtToken(String token) {
+
+        Map<String, Object> claims = null;
+        try {
+            claims = Jwts.parser()
                         .verifyWith((SecretKey) key())
                 .build().parseSignedClaims(token)
-                .getPayload().getSubject();
+                .getPayload();
+        } catch (Exception e) {
+            System.out.println("error parsing JWT");
+            logger.atError();
+        }
+        
+
+        return claims;
     }
 
     private Key key() {

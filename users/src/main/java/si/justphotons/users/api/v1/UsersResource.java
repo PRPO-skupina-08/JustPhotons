@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
+import si.justphotons.users.api.v1.dtos.UserEssentials;
 import si.justphotons.users.entities.User;
 import si.justphotons.users.services.beans.UsersBean;
 
@@ -27,11 +29,21 @@ public class UsersResource {
 		this.usersBean = ub;
 	}
 
+	/* for checking the user id from jwt */
+	@GetMapping("/id")
+	public ResponseEntity<String> getMe(HttpServletRequest request) {
+		String id = usersBean.getIdFromToken(request);
+		if (id == null) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		return new ResponseEntity<>(id, HttpStatus.OK);
+	}
+
 	@GetMapping("/{id}")
-	public ResponseEntity<User> getOne(@PathVariable Long id) {
-		User org = this.usersBean.getOne(id);
-		if (org != null) {
-			return new ResponseEntity<>(org, HttpStatus.OK);
+	public ResponseEntity<UserEssentials> getOne(@PathVariable Long id) {
+		UserEssentials usr = this.usersBean.getOne(id);
+		if (usr != null) {
+			return new ResponseEntity<>(usr, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
