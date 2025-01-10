@@ -19,5 +19,9 @@ test: gotest httptest
 migrate: build
 	@go run cmd/migrate/migrate.go
 
-run: build
+swagger: build
+	@swag f
+	@swag init -d "./cmd,./services/metadata,./types,./utils" -g api/api.go -o cmd/docs
+
+run: build swagger
 	./bin/img-file-service

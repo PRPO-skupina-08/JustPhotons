@@ -11,7 +11,7 @@ type MetadataStore interface {
 }
 
 type Metadata struct {
-	gorm.Model
+	gorm.Model `swaggertype:"object" json:"-"`
 	// ImageRef uint
 	// Image    Image `gorm:"foreignKey:ImageRef"`
 	ImageId uint `gorm:"not null;check:image_id <> '';check:image_id > 0;unique"`

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"image-service/cmd/health"
 	"image-service/services/images"
 	"log"
 	"net/http"
@@ -37,6 +38,9 @@ func (s *APIServer) Run() error {
     imageStore := images.NewStore(s.db) // prepare for dependency injection
     imagesHandler := images.NewHandler(imageStore) // create the controller and inject the dependency
     imagesHandler.CreateRoutes(router)
+
+    // Healthcheck
+    router.Get("/healthcheck", health.HealthCheckHandler)
 
     // For frontend.
 	c := cors.New(cors.Options{

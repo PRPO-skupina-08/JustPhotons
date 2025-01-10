@@ -6,8 +6,13 @@ import (
 	"log"
 	"net/http"
 
+	_ "image-metadata/cmd/docs"
+	"image-metadata/cmd/health"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	httpSwagger "github.com/swaggo/http-swagger"
+
 	"gorm.io/gorm"
 )
 
@@ -27,7 +32,11 @@ func NewAPIServer(addr string, db *gorm.DB) *APIServer {
 	}
 }
 
-// Runs the API server
+//	@title			Swagger Image Metadata API
+//	@version		0.1.0
+//	@description	This is a microservice for managing images' metadata
+
+//	@BasePath	/api/v1
 func (s *APIServer) Run() error {
 	// Creates router_prefix
 	router_prefix := chi.NewRouter()
@@ -38,6 +47,11 @@ func (s *APIServer) Run() error {
 	metadataStore := metadata.NewStore(s.db)              // prepare for dependency injection
 	metadataHandler := metadata.NewHandler(metadataStore) // create the controller and inject the dependency
 	metadataHandler.CreateRoutes(router)
+
+    router.Mount("/docs", httpSwagger.WrapHandler)
+
+    // Healthcheck
+    router.Get("/healthcheck", health.HealthCheckHandler)
 
 	// For frontend.
 	c := cors.New(cors.Options{

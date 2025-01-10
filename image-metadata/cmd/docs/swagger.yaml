@@ -1,0 +1,194 @@
+basePath: /api/v1
+definitions:
+  types.InsertMetadataPayload:
+    properties:
+      image_id:
+        type: integer
+      rating:
+        type: integer
+    type: object
+  types.Metadata:
+    properties:
+      imageId:
+        description: |-
+          ImageRef uint
+          Image    Image `gorm:"foreignKey:ImageRef"`
+        type: integer
+      rating:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: This is a microservice for managing images' metadata
+  title: Swagger Image Metadata API
+  version: 0.1.0
+paths:
+  /metadata:
+    delete:
+      description: Deletes many metadata entries based on its query parameters. **At
+        least one paramater must be present!**
+      parameters:
+      - description: Image ID (not the metadata entry's ID)
+        example: 42
+        in: query
+        name: image_id
+        type: integer
+      - description: Image rating, between 0 and 5 (inclusive)
+        example: 4
+        in: query
+        name: rating
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Sucessfully deleted
+        "400":
+          description: Neither `image_id` nor `rating` specified, but at least one
+            is needed
+          schema: {}
+        "404":
+          description: No results
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Delete many Metadata entries
+      tags:
+      - metadata
+    get:
+      description: Retrieves many metadata entries based on its query parameters.
+      parameters:
+      - description: Maximum amount of returned entries (>0). To be used with `offset`
+          in order to achieve pagination.
+        example: 20
+        in: query
+        name: limit
+        type: integer
+      - description: Amount of entries left out at the start. To be used with `limit`
+          in order to achieve pagination.
+        example: 10
+        in: query
+        name: offset
+        type: integer
+      - description: SQL sorting in with pattern `<field>:<order>[,]...`, first pattern
+          does primary sort, second pattern secondary sort etc.
+        example: rating:asc,image_id:desc
+        in: query
+        name: sort
+        type: string
+      - description: The ID of the image to which the metadata entry belongs.
+        example: 42
+        in: query
+        name: image_id
+        type: integer
+      - description: Image rating, between 0 and 5 (inclusive)
+        example: 4
+        in: query
+        maximum: 5
+        minimum: 0
+        name: rating
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Matching entry
+          schema:
+            $ref: '#/definitions/types.Metadata'
+        "400":
+          description: Incorrect input
+          schema: {}
+        "404":
+          description: No results
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Get many Metadata entries
+      tags:
+      - metadata
+    post:
+      consumes:
+      - application/json
+      description: Creates a new metadata entry in the database
+      parameters:
+      - description: Insert metadata payload
+        in: body
+        name: metadata
+        required: true
+        schema:
+          $ref: '#/definitions/types.InsertMetadataPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created new entry
+          schema:
+            $ref: '#/definitions/types.Metadata'
+        "400":
+          description: Incorrect input (missing fields, incorrect data etc.)
+          schema: {}
+        "500":
+          description: Internal server error, but can be caused by database rejecting
+            wrong data (would be a developer's mistake).
+          schema: {}
+      summary: Insert/create a new Metadata entry
+      tags:
+      - metadata
+  /metadata/{id}:
+    delete:
+      description: Deletes a specific metadata entry based on its ID.
+      parameters:
+      - description: Metadata entry ID
+        example: 42
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Sucessfully deleted
+        "400":
+          description: Incorrect input
+          schema: {}
+        "404":
+          description: Nothing to delete
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Delete a single Metadata entry
+      tags:
+      - metadata
+    get:
+      description: Retrieves a specific metadata entry based on its ID.
+      parameters:
+      - description: Metadata entry ID
+        example: 42
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Matching entry
+          schema:
+            $ref: '#/definitions/types.Metadata'
+        "400":
+          description: Incorrect input
+          schema: {}
+        "404":
+          description: No results
+          schema: {}
+        "500":
+          description: Internal server error
+          schema: {}
+      summary: Get single Metadata entry
+      tags:
+      - metadata
+swagger: "2.0"
