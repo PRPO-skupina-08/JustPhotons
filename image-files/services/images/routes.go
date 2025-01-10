@@ -3,6 +3,7 @@ package images
 import (
 	"encoding/base64"
 	"fmt"
+	"image-service/config"
 	"image-service/types"
 	"image-service/utils"
 	"net/http"
@@ -28,7 +29,7 @@ func NewHandler(store types.ImageStore) *Handler {
 // Router function
 func (h *Handler) CreateRoutes(parentRouter *chi.Mux) {
 	subrouter := chi.NewRouter()
-	parentRouter.Mount("/images", subrouter)
+	parentRouter.Mount(config.Subroute, subrouter)
 
 	subrouter.Use(middleware.Logger)
 

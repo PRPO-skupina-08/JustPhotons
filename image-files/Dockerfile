@@ -3,10 +3,15 @@ FROM golang:1.23 AS build-stage
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
-RUN go mod download
-
-COPY . ./
+COPY go.mod go.sum Makefile ./
+COPY bin/ ./bin/ 
+COPY cmd/ ./cmd/ 
+COPY config/ ./config/
+COPY db/ ./db/
+COPY services/ ./services/
+COPY types/ ./types/
+COPY utils/ ./utils/
+COPY tests/ ./tests/
 
 RUN CGO_ENABLED=0 GOOS=linux make build
 

@@ -33,7 +33,7 @@ func (s *APIServer) Run() error {
 	// Creates router_prefix
 	router_prefix := chi.NewRouter()
     router := chi.NewRouter()
-    router_prefix.Mount("/api/v1", router)
+    router_prefix.Mount(config.APIVersion, router)
 
 	// Register / add endpoints (services), controller == handler
     imageStore := images.NewStore(s.db) // prepare for dependency injection
