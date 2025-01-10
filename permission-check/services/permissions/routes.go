@@ -47,7 +47,7 @@ func (h *Handler) handleGetPermissions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// retrieve permission / check if permission exists
-	img, result := h.store.GetPermissionById(uint(id))
+	perm, result := h.store.GetPermissionById(uint(id))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
 		return
@@ -56,7 +56,7 @@ func (h *Handler) handleGetPermissions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, img)
+	utils.WriteJSON(w, http.StatusOK, perm)
 }
 
 func (h *Handler) handleGetSpecificPermission(w http.ResponseWriter, r *http.Request) {
@@ -128,7 +128,7 @@ func (h *Handler) handlePostPermission(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create new permission entry
-	md, result := h.store.InsertPermission(&types.Permission{
+	perm, result := h.store.InsertPermission(&types.Permission{
 		OrgId:  payload.OrgId,
 		UserId: payload.UserId,
 	})
@@ -140,7 +140,7 @@ func (h *Handler) handlePostPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, md)
+	utils.WriteJSON(w, http.StatusCreated, perm)
 }
 
 func (h *Handler) handleDeletePermission(w http.ResponseWriter, r *http.Request) {

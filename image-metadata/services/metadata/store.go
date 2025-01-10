@@ -17,7 +17,7 @@ func NewStore(db *gorm.DB) *Store {
 }
 
 func (s *Store) GetMetadataById(id uint) (md types.Metadata, result *gorm.DB) {
-	result = s.db.First(md, id)
+	result = s.db.First(&md, id)
 	return
 }
 

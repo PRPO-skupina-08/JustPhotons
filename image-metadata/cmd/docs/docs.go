@@ -75,7 +75,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Matching entry",
                         "schema": {
-                            "$ref": "#/definitions/types.Metadata"
+                            "$ref": "#/definitions/types.SwaggerMetadata"
                         }
                     },
                     "400": {
@@ -119,7 +119,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Successfully created new entry",
                         "schema": {
-                            "$ref": "#/definitions/types.Metadata"
+                            "$ref": "#/definitions/types.SwaggerMetadata"
                         }
                     },
                     "400": {
@@ -207,7 +207,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Matching entry",
                         "schema": {
-                            "$ref": "#/definitions/types.Metadata"
+                            "$ref": "#/definitions/types.SwaggerMetadata"
                         }
                     },
                     "400": {
@@ -278,14 +278,13 @@ const docTemplate = `{
                 }
             }
         },
-        "types.Metadata": {
+        "types.SwaggerMetadata": {
             "type": "object",
             "properties": {
                 "albumId": {
                     "type": "integer"
                 },
                 "imageId": {
-                    "description": "ImageRef uint\nImage    Image ` + "`" + `gorm:\"foreignKey:ImageRef\"` + "`" + `",
                     "type": "integer"
                 },
                 "rating": {

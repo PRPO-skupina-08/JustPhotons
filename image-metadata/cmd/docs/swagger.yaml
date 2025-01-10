@@ -9,14 +9,11 @@ definitions:
       rating:
         type: integer
     type: object
-  types.Metadata:
+  types.SwaggerMetadata:
     properties:
       albumId:
         type: integer
       imageId:
-        description: |-
-          ImageRef uint
-          Image    Image `gorm:"foreignKey:ImageRef"`
         type: integer
       rating:
         type: integer
@@ -109,7 +106,7 @@ paths:
         "200":
           description: Matching entry
           schema:
-            $ref: '#/definitions/types.Metadata'
+            $ref: '#/definitions/types.SwaggerMetadata'
         "400":
           description: Incorrect input
           schema: {}
@@ -139,7 +136,7 @@ paths:
         "201":
           description: Successfully created new entry
           schema:
-            $ref: '#/definitions/types.Metadata'
+            $ref: '#/definitions/types.SwaggerMetadata'
         "400":
           description: Incorrect input (missing fields, incorrect data etc.)
           schema: {}
@@ -192,7 +189,7 @@ paths:
         "200":
           description: Matching entry
           schema:
-            $ref: '#/definitions/types.Metadata'
+            $ref: '#/definitions/types.SwaggerMetadata'
         "400":
           description: Incorrect input
           schema: {}

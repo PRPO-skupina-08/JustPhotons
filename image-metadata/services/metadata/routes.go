@@ -51,11 +51,11 @@ func (h *Handler) CreateRoutes(parentRouter *chi.Mux) {
 //	@Description	Retrieves a specific metadata entry based on its ID.
 //	@Tags			metadata
 //	@Produce		json
-//	@Param			id	path		uint			true	"Metadata entry ID"	example(42)
-//	@Success		200	{object}	types.Metadata	"Matching entry"
-//	@Failure		400	{object}	error			"Incorrect input"
-//	@Failure		404	{object}	error			"No results"
-//	@Failure		500	{object}	error			"Internal server error"
+//	@Param			id	path		uint					true	"Metadata entry ID"	example(42)
+//	@Success		200	{object}	types.SwaggerMetadata	"Matching entry"
+//	@Failure		400	{object}	error					"Incorrect input"
+//	@Failure		404	{object}	error					"No results"
+//	@Failure		500	{object}	error					"Internal server error"
 //	@Router			/metadata/{id} [get]
 func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 	paramId := chi.URLParam(r, "id")
@@ -64,8 +64,8 @@ func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, err)
 	}
 
-	// retrieve image / check if image exists
-	img, result := h.store.GetMetadataById(uint(id))
+	// retrieve metadata / check if metadata exists
+	md, result := h.store.GetMetadataById(uint(id))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
 		return
@@ -74,7 +74,7 @@ func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, img)
+	utils.WriteJSON(w, http.StatusOK, md)
 }
 
 // GetAllMetadata godoc
@@ -83,16 +83,16 @@ func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 //	@Description	Retrieves many metadata entries based on its query parameters.
 //	@Tags			metadata
 //	@Produce		json
-//	@Param			limit		query		uint			false	"Maximum amount of returned entries (>0). To be used with `offset` in order to achieve pagination."							example(20)
-//	@Param			offset		query		uint			false	"Amount of entries left out at the start. To be used with `limit` in order to achieve pagination."							example(10)
-//	@Param			sort		query		string			false	"SQL sorting in with pattern `<field>:<order>[,]...`, first pattern does primary sort, second pattern secondary sort etc."	example(rating:asc,image_id:desc)
-//	@Param			image_id	query		uint			false	"The ID of the image to which the metadata entry belongs."																	example(42)
-//	@Param			rating		query		uint			false	"Image rating, between 1 and 5 (inclusive)"																					example(4)	minimum(0)	maximum(5)
-//	@Param			album_id	query		uint			false	"The ID of the album to which the image belongs"																			example(42)
-//	@Success		200			{object}	types.Metadata	"Matching entry"
-//	@Failure		400			{object}	error			"Incorrect input"
-//	@Failure		404			{object}	error			"No results"
-//	@Failure		500			{object}	error			"Internal server error"
+//	@Param			limit		query		uint					false	"Maximum amount of returned entries (>0). To be used with `offset` in order to achieve pagination."							example(20)
+//	@Param			offset		query		uint					false	"Amount of entries left out at the start. To be used with `limit` in order to achieve pagination."							example(10)
+//	@Param			sort		query		string					false	"SQL sorting in with pattern `<field>:<order>[,]...`, first pattern does primary sort, second pattern secondary sort etc."	example(rating:asc,image_id:desc)
+//	@Param			image_id	query		uint					false	"The ID of the image to which the metadata entry belongs."																	example(42)
+//	@Param			rating		query		uint					false	"Image rating, between 1 and 5 (inclusive)"																					example(4)	minimum(0)	maximum(5)
+//	@Param			album_id	query		uint					false	"The ID of the album to which the image belongs"																			example(42)
+//	@Success		200			{object}	types.SwaggerMetadata	"Matching entry"
+//	@Failure		400			{object}	error					"Incorrect input"
+//	@Failure		404			{object}	error					"No results"
+//	@Failure		500			{object}	error					"Internal server error"
 //	@Router			/metadata [get]
 func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 	limit, err := getURLQuery(r, "limit", parseUintWrapper(), 20)
@@ -157,7 +157,7 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			metadata	body		types.InsertMetadataPayload	true	"Insert metadata payload"	example({ "image_id": 42, "rating": 4, "album_id": 2 })
-//	@Success		201			{object}	types.Metadata				"Successfully created new entry"
+//	@Success		201			{object}	types.SwaggerMetadata		"Successfully created new entry"
 //	@Failure		400			{object}	error						"Incorrect input (missing fields, incorrect data etc.)"
 //	@Failure		500			{object}	error						"Internal server error, but can be caused by database rejecting wrong data (would be a developer's mistake)."
 //	@Router			/metadata [post]

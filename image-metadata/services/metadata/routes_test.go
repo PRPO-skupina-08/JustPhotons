@@ -71,18 +71,38 @@ func TestImageServiceHandlers(t *testing.T) {
 		http.StatusBadRequest,
 	))
 
-	t.Run("Should fail due to bad imageID", handler.abstracted_POST(
+	t.Run("Should fail due to bad image_id", handler.abstracted_POST(
 		types.InsertMetadataPayload{
 			ImageId: 0,
 			Rating:  4,
+            AlbumId: 1,
 		},
 		http.StatusBadRequest,
 	))
 
-	t.Run("Should fail due to bad rating", handler.abstracted_POST(
+	t.Run("Should fail due to bad album_id", handler.abstracted_POST(
+		types.InsertMetadataPayload{
+			ImageId: 1,
+			Rating:  4,
+            AlbumId: 0,
+		},
+		http.StatusBadRequest,
+	))
+
+	t.Run("Should fail due to too high rating", handler.abstracted_POST(
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  8,
+            AlbumId: 1,
+		},
+		http.StatusBadRequest,
+	))
+
+	t.Run("Should fail due to too low rating", handler.abstracted_POST(
+		types.InsertMetadataPayload{
+			ImageId: 1,
+			Rating:  0,
+            AlbumId: 1,
 		},
 		http.StatusBadRequest,
 	))
@@ -91,6 +111,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  5,
+            AlbumId: 4,
 		},
 		http.StatusCreated,
 	))
@@ -98,7 +119,8 @@ func TestImageServiceHandlers(t *testing.T) {
 	t.Run("Should correctly add new data entry", handler.abstracted_POST(
 		types.InsertMetadataPayload{
 			ImageId: 1,
-			Rating:  0,
+			Rating:  1,
+            AlbumId: 5,
 		},
 		http.StatusCreated,
 	))
@@ -107,6 +129,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  3,
+            AlbumId: 6,
 		},
 		http.StatusCreated,
 	))

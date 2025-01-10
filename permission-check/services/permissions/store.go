@@ -18,7 +18,7 @@ func NewStore(db *gorm.DB) *Store {
 }
 
 func (s *Store) GetPermissionById(id uint) (p types.Permission, result *gorm.DB) {
-	result = s.db.First(p, id)
+	result = s.db.First(&p, id)
 	return
 }
 

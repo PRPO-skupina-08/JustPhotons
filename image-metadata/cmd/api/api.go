@@ -48,10 +48,10 @@ func (s *APIServer) Run() error {
 	metadataHandler := metadata.NewHandler(metadataStore) // create the controller and inject the dependency
 	metadataHandler.CreateRoutes(router)
 
-    router.Mount("/docs", httpSwagger.WrapHandler)
+    router.Mount(config.Documentation, httpSwagger.WrapHandler)
 
     // Healthcheck
-    router.Get("/healthcheck", health.HealthCheckHandler)
+    router.Get(config.Healthcheck, health.HealthCheckHandler)
 
 	// For frontend.
 	c := cors.New(cors.Options{
@@ -63,6 +63,9 @@ func (s *APIServer) Run() error {
 	corsHandler := c.Handler(router_prefix)
 
 	log.Printf("API server listening on port %s", s.addr)
+    log.Printf("API endpoint base: %s%s", config.APIVersion, config.Subroute)
+    log.Printf("Documentation (Swagger): %s%s", config.APIVersion, config.Documentation)
+    log.Printf("Healthcheck: %s%s", config.APIVersion, config.Healthcheck)
 
 	return http.ListenAndServe(s.addr, corsHandler)
 }
