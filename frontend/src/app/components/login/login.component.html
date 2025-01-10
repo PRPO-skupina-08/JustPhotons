@@ -1,0 +1,8 @@
+<div>
+    <input [(ngModel)]="email" type="text" placeholder="email">
+    <input [(ngModel)]="password" type="password" placeholder="password">
+    <button (click)="onSubmit()">PRIJAVI SE</button>
+    <div *ngIf="errorMessage" class="error-message">
+        <p> {{errorMessage}} </p>
+    </div>
+</div>

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import si.justphotons.users.api.v1.dtos.LoginEssentials;
-import si.justphotons.users.jwt.JwtUtils;
 import si.justphotons.users.services.beans.UsersBean;
 
 @RestController

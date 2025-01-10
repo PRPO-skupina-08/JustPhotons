@@ -5,10 +5,11 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD: 1234567890
       MARIADB_DATABASE: justphotons
-    ports:
-      - "3306:3306"
+    # ports:
+    #   - "3306:3306"
   
   organisations:
+    container_name: organisations
     build: ./organisations
     environment:
       DATABASE_URL: mariadb://db:3306/justphotons
@@ -19,6 +20,7 @@ services:
       - "8082:8082"
 
   users:
+    container_name: users
     build: ./users
     environment:
       DATABASE_URL: mariadb://db:3306/justphotons
@@ -27,3 +29,20 @@ services:
     restart: always
     ports:
       - "8081:8081"
+
+  coordinator:
+    container_name: coordinator
+    build: ./coordinator
+    environment:
+      ORGANISATIONS_URL: http://organisations:8082/v1/organisations
+      USERS_URL: http://users:8081/v1
+    restart: always
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: always
+    ports:
+      - '80:80'
