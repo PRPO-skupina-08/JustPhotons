@@ -65,6 +65,10 @@ func (h *Handler) handleGetSpecificPermission(w http.ResponseWriter, r *http.Req
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
+	if limit <= 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Limit cannot be 0!"))
+		return
+	}
 
 	offset, err := getURLQuery(r, "offset", parseUintWrapper(), 0)
 	if err != nil {

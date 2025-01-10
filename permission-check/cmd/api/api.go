@@ -41,7 +41,7 @@ func (s *APIServer) Run() error {
 	permissionHandler.CreateRoutes(router)
 
     // Healthcheck
-    router.Get("/healthcheck", health.HealthCheckHandler)
+    router.Get(config.Healthcheck, health.HealthCheckHandler)
 
 	// For frontend.
 	c := cors.New(cors.Options{
@@ -53,6 +53,8 @@ func (s *APIServer) Run() error {
 	corsHandler := c.Handler(router_prefix)
 
 	log.Printf("API server listening on port %s", s.addr)
+    log.Printf("API endpoint base: %s%s", config.APIVersion, config.Subroute)
+    log.Printf("Healthcheck: %s%s", config.APIVersion, config.Healthcheck)
 
 	return http.ListenAndServe(s.addr, corsHandler)
 }

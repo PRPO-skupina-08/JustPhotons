@@ -23,11 +23,7 @@ func (s *Store) GetPermissionById(id uint) (p types.Permission, result *gorm.DB)
 }
 
 func (s *Store) GetSpecificPermission(limit int, offset int, orgId uint, userId uint) (p []*types.Permission, result *gorm.DB) {
-	result = s.db.Limit(limit).Offset(offset)
-
-	if orgId > 0 {
-		result = result.Where(&types.Permission{OrgId: orgId})
-	}
+	result = s.db.Limit(limit).Offset(offset).Where(&types.Permission{OrgId: orgId, UserId: userId})
 
 	result.Find(&p)
 	return
@@ -49,7 +45,7 @@ func (s *Store) DeletePermission(id uint) (result *gorm.DB) {
 }
 
 func (s *Store) DeleteSpecificPermission(userId uint64, orgId uint64) (result *gorm.DB) {
-    var whereClauses []string = make([]string, 0)
+	var whereClauses []string = make([]string, 0)
 
 	if userId != 0 {
 		whereClauses = append(whereClauses, "user_id = "+strconv.FormatUint(userId, 10))
