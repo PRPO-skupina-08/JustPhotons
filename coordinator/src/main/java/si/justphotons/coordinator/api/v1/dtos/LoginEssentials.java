@@ -1,4 +1,4 @@
-package si.justphotons.coordinator.entities.external;
+package si.justphotons.coordinator.api.v1.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;

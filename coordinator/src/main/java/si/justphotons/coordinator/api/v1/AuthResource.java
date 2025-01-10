@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import si.justphotons.coordinator.entities.external.LoginEssentials;
+import si.justphotons.coordinator.api.v1.dtos.LoginEssentials;
 import si.justphotons.coordinator.services.beans.CoordinatorBean;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,15 +37,15 @@ public class AuthResource {
 	}
 
 
-	@Operation(summary = "Get a book by its id")
+	@Operation(summary = "Login to existing user account")
 	@ApiResponses(value = { 
 		@ApiResponse(responseCode = "200", description = "Login successful, JWT returned", 
 			content = { @Content(mediaType = "application/json", 
-			schema = @Schema(implementation = String.class)) }),
-		@ApiResponse(responseCode = "400", description = "Invalid login fields", 
-			content = @Content), 
-		@ApiResponse(responseCode = "404", description = "Email not found", 
-			content = @Content) })
+			schema = @Schema(implementation = String.class)) 
+		}),
+		@ApiResponse(responseCode = "400", description = "Invalid credentials", 
+			content = @Content)
+	})
 	@PostMapping("/login")
 	public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginEssentials entity) {
         String jwt;

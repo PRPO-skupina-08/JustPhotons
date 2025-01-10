@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
-import si.justphotons.coordinator.entities.external.LoginEssentials;
+import si.justphotons.coordinator.api.v1.dtos.LoginEssentials;
 import si.justphotons.coordinator.entities.external.Organisation;
 import si.justphotons.coordinator.entities.external.OrganisationEssentials;
 
