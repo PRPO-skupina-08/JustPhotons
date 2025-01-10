@@ -29,9 +29,11 @@ public class RequestInterceptor implements HandlerInterceptor {
         try {
             Long userId = getIdFromJWT(request);
             if (userId == null) {
+                System.out.println("niste prijavljeni");
                 response.sendError(401, "Niste prijavljeni");
                 return false;
             }
+            System.out.printf("User ID: %d\n", userId);
             request.setAttribute("userId", userId);
         }
         //* If the Exception is caught, this method will return false
