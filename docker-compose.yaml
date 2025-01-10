@@ -30,6 +30,51 @@ services:
     ports:
       - "8081:8081"
 
+  image-files:
+    container_name: image-files
+    build: ./image-files
+    environment:
+      DB_ADDRESS: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 1234567890
+      DB_NAME: justphotons
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "8083:8080"
+
+  image-metadata:
+    container_name: image-metadata
+    build: ./image-metadata
+    environment:
+      DB_ADDRESS: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 1234567890
+      DB_NAME: justphotons
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "8084:8080"
+
+  permission-check:
+    container_name: permission-check
+    build: ./permission-check
+    environment:
+      DB_ADDRESS: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 1234567890
+      DB_NAME: justphotons
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "8085:8080"
+
   coordinator:
     container_name: coordinator
     build: ./coordinator

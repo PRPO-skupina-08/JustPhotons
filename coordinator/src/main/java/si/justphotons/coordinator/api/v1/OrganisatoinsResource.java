@@ -71,9 +71,6 @@ public class OrganisatoinsResource {
 	@GetMapping("/{id}")
 	public ResponseEntity<Organisation> getOne(@PathVariable Long id, HttpServletRequest request) {
 		Long userId = (Long) request.getAttribute("userId");
-		if (userId == null) {
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-		}
 
 		Organisation org = null;
 		try {
