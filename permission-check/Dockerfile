@@ -4,7 +4,7 @@ FROM golang:1.23 AS build-stage
 WORKDIR /app
 
 COPY go.mod go.sum Makefile ./
-COPY bin/ ./bin/ 
+RUN mkdir bin -p
 COPY cmd/ ./cmd/ 
 COPY config/ ./config/
 COPY db/ ./db/
