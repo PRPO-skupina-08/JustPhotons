@@ -71,6 +71,11 @@ make migrate
 This will run `cmd/migrate/migrate.go` program, that is tasked with performing
 database migrations.
 
+> ***NOTE***: database migrations run every time the server is started. Database
+> migrations do not delete data. So, whenever changing the structures in
+> `types/types.go`, be sure to drop the table, manually or using `migrate.go`
+> with procedure described below
+
 ##### Advanced `migrate.go` functions
 
 The `migrate.go` program has more functionalities for assisting migrations 
