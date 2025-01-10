@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 import si.justphotons.coordinator.api.v1.dtos.LoginEssentials;
+import si.justphotons.coordinator.api.v1.dtos.RegistrationEssentials;
 import si.justphotons.coordinator.entities.external.Organisation;
 import si.justphotons.coordinator.entities.external.OrganisationEssentials;
 
@@ -72,6 +73,16 @@ public class CoordinatorBean {
         String response =  restTemplate.postForObject(
             String.format("%s/login", USERS_URL),
             loginEssentials,
+            String.class
+        );
+        return response;
+    }
+
+    public String register(RegistrationEssentials registrationEssentials) {
+        RestTemplate restTemplate = new RestTemplate();
+        String response =  restTemplate.postForObject(
+            String.format("%s/register", USERS_URL),
+            registrationEssentials,
             String.class
         );
         return response;

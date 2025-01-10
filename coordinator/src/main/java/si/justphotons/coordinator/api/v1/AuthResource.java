@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import si.justphotons.coordinator.api.v1.dtos.JwtResponse;
 import si.justphotons.coordinator.api.v1.dtos.LoginEssentials;
+import si.justphotons.coordinator.api.v1.dtos.RegistrationEssentials;
 import si.justphotons.coordinator.services.beans.CoordinatorBean;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -51,6 +52,32 @@ public class AuthResource {
         String jwt;
         try {
 			jwt = coordinatorBean.login(entity);
+		} catch (HttpClientErrorException e) {
+			JwtResponse json = new JwtResponse();
+			json.setError(e.getMessage());
+			return new ResponseEntity<>(e.getStatusCode());
+		}
+		
+		JwtResponse json = new JwtResponse();
+		json.setToken(jwt);
+		return new ResponseEntity<>(json, HttpStatus.OK);
+	}
+
+
+	@Operation(summary = "Register a new user account")
+	@ApiResponses(value = { 
+		@ApiResponse(responseCode = "200", description = "Registration successful, JWT returned", 
+			content = { @Content(mediaType = "application/json", 
+			schema = @Schema(implementation = JwtResponse.class)) 
+		}),
+		@ApiResponse(responseCode = "400", description = "Invalid credentials", 
+			content = @Content)
+	})
+	@PostMapping("/register")
+	public ResponseEntity<JwtResponse> register(@RequestBody @Valid RegistrationEssentials entity) {
+        String jwt;
+        try {
+			jwt = coordinatorBean.register(entity);
 		} catch (HttpClientErrorException e) {
 			JwtResponse json = new JwtResponse();
 			json.setError(e.getMessage());

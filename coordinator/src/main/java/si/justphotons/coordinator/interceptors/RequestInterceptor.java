@@ -77,7 +77,6 @@ public class RequestInterceptor implements HandlerInterceptor {
             HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
             String url = String.format("%s/users/id", USERS_URL);
-            System.out.printf("URL: %s\n", url);
             try {
                 ResponseEntity<Long> response = restTemplate.exchange(
                 url,
