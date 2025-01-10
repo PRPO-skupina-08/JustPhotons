@@ -2,6 +2,7 @@ package db
 
 import (
 	"image-metadata/config"
+	"image-metadata/types"
 	"log"
 	"os"
 	"time"
@@ -34,6 +35,7 @@ func NewMariaDB() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	db.AutoMigrate(&types.Metadata{})
 
 	return db, nil
 }

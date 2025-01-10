@@ -1,9 +1,10 @@
 package db
 
 import (
-	"permission-check/config"
 	"log"
 	"os"
+	"permission-check/config"
+	"permission-check/types"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -34,6 +35,8 @@ func NewMariaDB() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	db.AutoMigrate(&types.Permission{})
 
 	return db, nil
 }
