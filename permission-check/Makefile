@@ -21,3 +21,6 @@ migrate: build
 
 run: build
 	./bin/permission-service
+
+containerize:
+	@docker build -t permission-service .

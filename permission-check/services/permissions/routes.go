@@ -2,6 +2,7 @@ package permissions
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"permission-check/config"
 	"permission-check/types"
@@ -120,15 +121,19 @@ func (h *Handler) handlePostPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingPermission, result := h.store.GetSpecificPermission(-1, -1, payload.OrgId, payload.OrgId)
+	existingPermission, result := h.store.GetSpecificPermission(1, 0, payload.OrgId, payload.UserId)
 	if result.Error != nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Failed to fetch permission: %v", result.Error))
 		return
 	}
 
+    log.Printf("exits: %v", existingPermission)
 	if existingPermission != nil && len(existingPermission) > 0 {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("This org_id and user_id combination already exists."))
-		return
+        log.Printf("org: %v, usr: %v", existingPermission[0].OrgId, existingPermission[0].UserId)
+		if existingPermission[0].OrgId == payload.OrgId && existingPermission[0].UserId == payload.UserId {
+			utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("This org_id and user_id combination already exists."))
+			return
+		}
 	}
 
 	// create new permission entry
