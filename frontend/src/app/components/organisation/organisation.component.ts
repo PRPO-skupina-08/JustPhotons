@@ -3,12 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Organisation } from '../../classes/organisation';
 import { OrganisatoinsService } from '../../services/organisatoins.service';
 import { CommonModule } from '@angular/common';
-import { SidebarComponent } from "../sidebar/sidebar.component";
 
 @Component({
   selector: 'app-organisation',
   standalone: true,
-  imports: [CommonModule, SidebarComponent],
+  imports: [CommonModule],
   templateUrl: './organisation.component.html',
   styleUrl: './organisation.component.css'
 })

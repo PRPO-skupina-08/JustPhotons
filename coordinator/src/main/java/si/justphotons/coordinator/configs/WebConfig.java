@@ -16,10 +16,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     RequestInterceptor interceptor;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
-    }
+    // @Override
+    // public void addCorsMappings(CorsRegistry registry) {
+    //     registry.addMapping("/**");
+    // }
 
     // Register an interceptor with the registry, Interceptor name : RequestInterceptor
     @Override

@@ -33,6 +33,7 @@ public class RequestInterceptor implements HandlerInterceptor {
                 response.sendError(401, "Niste prijavljeni");
                 return false;
             }
+            System.out.printf("User ID: %d\n", userId);
             request.setAttribute("userId", userId);
         }
         //* If the Exception is caught, this method will return false

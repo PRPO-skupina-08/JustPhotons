@@ -18,12 +18,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import si.justphotons.coordinator.entities.external.Organisation;
 import si.justphotons.coordinator.entities.external.OrganisationEssentials;
 import si.justphotons.coordinator.services.beans.CoordinatorBean;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/organisations")
 public class OrganisatoinsResource {
@@ -69,12 +71,15 @@ public class OrganisatoinsResource {
 			content = @Content)
 	})
 	@GetMapping("/{id}")
-	public ResponseEntity<Organisation> getOne(@PathVariable Long id, HttpServletRequest request) {
+	public ResponseEntity<Organisation> getOne(@PathVariable Long orgId, HttpServletRequest request) {
 		Long userId = (Long) request.getAttribute("userId");
 
 		Organisation org = null;
 		try {
-			org = coordinatorBean.getOrganisation(id);
+			org = coordinatorBean.getOrganisation(orgId, userId);
+			if (org == null) {
+				return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+			}
 		} catch (HttpClientErrorException e) {
 			return new ResponseEntity<>(e.getStatusCode());
 		}

@@ -1,5 +1,6 @@
 package si.justphotons.coordinator.services.beans;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,12 +14,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.PreFlightRequestHandler;
 
+import ch.qos.logback.core.pattern.color.BoldBlueCompositeConverter;
 import jakarta.servlet.http.HttpServletRequest;
 import si.justphotons.coordinator.api.v1.dtos.LoginEssentials;
 import si.justphotons.coordinator.api.v1.dtos.RegistrationEssentials;
 import si.justphotons.coordinator.entities.external.Organisation;
 import si.justphotons.coordinator.entities.external.OrganisationEssentials;
+import si.justphotons.coordinator.entities.external.Permission;
 
 @Service
 public class CoordinatorBean {
@@ -29,40 +33,59 @@ public class CoordinatorBean {
     @Value("${USERS_URL:http://localhost:8081/v1}")
     private String USERS_URL;
 
+    @Value("${IMAGES_URL:http://localhost:8083/api/v1/images}")
+    private String IMAGES_URL;
+
+    @Value("${METADATA_URL:http://localhost:8084/api/v1/metadata}")
+    private String METADATA_URL;
+
+    @Value("${PERMISSIONS_URL:http://localhost:8085/api/v1/permissions}")
+    private String PERMISSIONS_URL;
+
 
     public List<OrganisationEssentials> getOrganisations(Long userId) {
-        List<OrganisationEssentials> essentials = new ArrayList<>();
-        /* tmp !!!
-        * fetch permission check instead
-        */
-        Map<Long, List<Long>> user2organisations = new HashMap<>() {{
-            put(1L, Arrays.asList(1L, 2L));
-            put(2L, Arrays.asList(1L, 3L));
-        }};
-
         RestTemplate restTemplate = new RestTemplate();
-        List<Long> organisations = user2organisations.get(userId);
+        List<OrganisationEssentials> essentials = new ArrayList<>();
 
-        if (organisations != null) {
-            for (Long orgId: organisations) {
-                ResponseEntity<OrganisationEssentials> response =  restTemplate.getForEntity(
-                    String.format("%s/essentials/%d", ORGANISATIONS_URL, orgId),
-                    OrganisationEssentials.class
-                );
-                OrganisationEssentials essential = response.getBody();
-                essentials.add(essential);
-            }
+        ResponseEntity<Permission[]> response = restTemplate.getForEntity(
+            String.format("%s?user_id=%d", PERMISSIONS_URL, userId),
+             Permission[].class
+        );
+        List<Permission> organisations = Arrays.asList(response.getBody());
+        
+        for (Permission perm : organisations) {
+            ResponseEntity<OrganisationEssentials> res =  restTemplate.getForEntity(
+                String.format("%s/essentials/%d", ORGANISATIONS_URL, perm.getOrgId()),
+                OrganisationEssentials.class
+            );
+            OrganisationEssentials essential = res.getBody();
+            essentials.add(essential);
         }
 
         return essentials;       
     }
 
-    public Organisation getOrganisation(Long id) {
+    public Organisation getOrganisation(Long orgId, Long userId) {
         RestTemplate restTemplate = new RestTemplate();
-        Organisation response =  restTemplate.getForObject(
-            String.format("%s/%d", ORGANISATIONS_URL, id),
+
+        ResponseEntity<Permission[]> response = restTemplate.getForEntity(
+            String.format("%s?user_id=%d&org_id=%d", PERMISSIONS_URL, userId, orgId),
+             Permission[].class
+        );
+        Permission[] permissions = response.getBody();
+        if (permissions == null) {
+            return null;
+        }
+
+        Boolean allowed = permissions.length != 0;
+        if (!allowed) {
+            return null;
+        }
+
+        Organisation res =  restTemplate.getForObject(
+            String.format("%s/%d", ORGANISATIONS_URL, orgId),
             Organisation.class);
-        return response;
+        return res;
     }
 
 
