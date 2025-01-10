@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 import si.justphotons.coordinator.api.v1.dtos.LoginEssentials;
+import si.justphotons.coordinator.api.v1.dtos.RegistrationEssentials;
 import si.justphotons.coordinator.entities.external.Organisation;
 import si.justphotons.coordinator.entities.external.OrganisationEssentials;
 
@@ -56,35 +57,6 @@ public class CoordinatorBean {
         return essentials;       
     }
 
-    public Long getIdFromJWT(HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        RestTemplate restTemplate = new RestTemplate();
-
-        if (authHeader != null && !authHeader.isEmpty()) {
-            // since the header should be added to each outgoing request,
-            // add an interceptor that handles this.
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("AUTHORIZATION", authHeader);
-            HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
-            String url = String.format("%s/users/id", USERS_URL);
-            try {
-                ResponseEntity<Long> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                requestEntity,
-                Long.class
-            );
-            return response.getBody();
-            } catch (Exception e) {
-                System.out.println(e);
-                return null;
-            }
-            
-          }
-        return null;
-    }
-
     public Organisation getOrganisation(Long id) {
         RestTemplate restTemplate = new RestTemplate();
         Organisation response =  restTemplate.getForObject(
@@ -101,6 +73,16 @@ public class CoordinatorBean {
         String response =  restTemplate.postForObject(
             String.format("%s/login", USERS_URL),
             loginEssentials,
+            String.class
+        );
+        return response;
+    }
+
+    public String register(RegistrationEssentials registrationEssentials) {
+        RestTemplate restTemplate = new RestTemplate();
+        String response =  restTemplate.postForObject(
+            String.format("%s/register", USERS_URL),
+            registrationEssentials,
             String.class
         );
         return response;

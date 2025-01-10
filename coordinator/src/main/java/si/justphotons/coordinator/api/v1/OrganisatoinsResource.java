@@ -46,7 +46,8 @@ public class OrganisatoinsResource {
 	})
 	@GetMapping
 	public ResponseEntity<List<OrganisationEssentials>> getAll(HttpServletRequest request) {
-		Long userId = coordinatorBean.getIdFromJWT(request);
+		Long userId = (Long) request.getAttribute("userId");
+		// Long userId = coordinatorBean.getIdFromJWT(request);
 		if (userId == null) {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
@@ -69,7 +70,7 @@ public class OrganisatoinsResource {
 	})
 	@GetMapping("/{id}")
 	public ResponseEntity<Organisation> getOne(@PathVariable Long id, HttpServletRequest request) {
-		Long userId = coordinatorBean.getIdFromJWT(request);
+		Long userId = (Long) request.getAttribute("userId");
 		if (userId == null) {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
