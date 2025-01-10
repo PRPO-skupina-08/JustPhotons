@@ -23,9 +23,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
-
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/organisations")
 public class OrganisatoinsResource {
@@ -48,10 +45,9 @@ public class OrganisatoinsResource {
 	})
 	@GetMapping
 	public ResponseEntity<List<OrganisationEssentials>> getAll(HttpServletRequest request) {
-		Long userId = (Long) request.getAttribute("userId");
-		// Long userId = coordinatorBean.getIdFromJWT(request);
+		Long userId = this.coordinatorBean.getIdFromJWT(request);
 		if (userId == null) {
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
 		List<OrganisationEssentials> essentials = coordinatorBean.getOrganisations(userId); 
@@ -70,9 +66,12 @@ public class OrganisatoinsResource {
 		@ApiResponse(responseCode = "404", description = "Organisatoin with :id not found", 
 			content = @Content)
 	})
-	@GetMapping("/{id}")
+	@GetMapping("/{orgId}")
 	public ResponseEntity<Organisation> getOne(@PathVariable Long orgId, HttpServletRequest request) {
-		Long userId = (Long) request.getAttribute("userId");
+		Long userId = this.coordinatorBean.getIdFromJWT(request);
+		if (userId == null) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
 
 		Organisation org = null;
 		try {

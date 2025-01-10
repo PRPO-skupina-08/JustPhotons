@@ -24,8 +24,13 @@ public class RequestInterceptor implements HandlerInterceptor {
     // Request is intercepted by this method before reaching the Controller
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
+        System.out.printf("URL: %s\n", request.getRequestURL());
         //* Business logic just when the request is received and intercepted by this interceptor before reaching the controller
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            System.out.println("OPTIONS omitted");
+            return true; // Skip interceptor logic for OPTIONS requests
+        }
+
         try {
             Long userId = getIdFromJWT(request);
             if (userId == null) {
