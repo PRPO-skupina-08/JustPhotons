@@ -75,7 +75,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 0,
 			Rating:  4,
-            AlbumId: 1,
+			AlbumId: 1,
 		},
 		http.StatusBadRequest,
 	))
@@ -84,7 +84,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  4,
-            AlbumId: 0,
+			AlbumId: 0,
 		},
 		http.StatusBadRequest,
 	))
@@ -93,7 +93,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  8,
-            AlbumId: 1,
+			AlbumId: 1,
 		},
 		http.StatusBadRequest,
 	))
@@ -102,7 +102,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  0,
-            AlbumId: 1,
+			AlbumId: 1,
 		},
 		http.StatusBadRequest,
 	))
@@ -111,7 +111,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  5,
-            AlbumId: 4,
+			AlbumId: 4,
 		},
 		http.StatusCreated,
 	))
@@ -120,7 +120,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  1,
-            AlbumId: 5,
+			AlbumId: 5,
 		},
 		http.StatusCreated,
 	))
@@ -129,7 +129,7 @@ func TestImageServiceHandlers(t *testing.T) {
 		types.InsertMetadataPayload{
 			ImageId: 1,
 			Rating:  3,
-            AlbumId: 6,
+			AlbumId: 6,
 		},
 		http.StatusCreated,
 	))

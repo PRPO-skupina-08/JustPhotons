@@ -32,10 +32,10 @@ func (s *Store) InsertImage(img *types.Image) (*types.Image, *gorm.DB) {
 
 func (s *Store) DeleteImage(id uint) (result *gorm.DB) {
 	result = s.db.Unscoped().Delete(&types.Image{
-        Model: gorm.Model{
-            ID: id,
-        },
-    })
-    log.Printf("id: \"%d\", gorm.DB: error: \"%s\", rows affected: \"%d\"\n", id, result.Error, result.RowsAffected)
+		Model: gorm.Model{
+			ID: id,
+		},
+	})
+	log.Printf("id: \"%d\", gorm.DB: error: \"%s\", rows affected: \"%d\"\n", id, result.Error, result.RowsAffected)
 	return
 }

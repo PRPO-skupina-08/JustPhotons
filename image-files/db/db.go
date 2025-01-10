@@ -36,7 +36,7 @@ func NewMariaDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-    db.AutoMigrate(&types.Image{})
+	db.AutoMigrate(&types.Image{})
 
 	return db, nil
 }

@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"permission-check/cmd/initializers"
 	"permission-check/types"
-	"os"
 
 	"gorm.io/gorm"
 )
