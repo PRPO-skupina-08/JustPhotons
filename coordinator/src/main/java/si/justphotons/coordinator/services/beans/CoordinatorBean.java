@@ -56,35 +56,6 @@ public class CoordinatorBean {
         return essentials;       
     }
 
-    public Long getIdFromJWT(HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        RestTemplate restTemplate = new RestTemplate();
-
-        if (authHeader != null && !authHeader.isEmpty()) {
-            // since the header should be added to each outgoing request,
-            // add an interceptor that handles this.
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("AUTHORIZATION", authHeader);
-            HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
-            String url = String.format("%s/users/id", USERS_URL);
-            try {
-                ResponseEntity<Long> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                requestEntity,
-                Long.class
-            );
-            return response.getBody();
-            } catch (Exception e) {
-                System.out.println(e);
-                return null;
-            }
-            
-          }
-        return null;
-    }
-
     public Organisation getOrganisation(Long id) {
         RestTemplate restTemplate = new RestTemplate();
         Organisation response =  restTemplate.getForObject(

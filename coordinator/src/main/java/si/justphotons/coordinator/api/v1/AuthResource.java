@@ -37,7 +37,6 @@ public class AuthResource {
 		this.coordinatorBean =  coordinatorBean;
 	}
 
-
 	@Operation(summary = "Login to existing user account")
 	@ApiResponses(value = { 
 		@ApiResponse(responseCode = "200", description = "Login successful, JWT returned", 
@@ -59,7 +58,7 @@ public class AuthResource {
 		}
 		
 		JwtResponse json = new JwtResponse();
-		json.setError(jwt);
+		json.setToken(jwt);
 		return new ResponseEntity<>(json, HttpStatus.OK);
 	}
 
