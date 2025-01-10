@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import si.justphotons.coordinator.api.v1.dtos.JwtResponse;
 import si.justphotons.coordinator.api.v1.dtos.LoginEssentials;
 import si.justphotons.coordinator.services.beans.CoordinatorBean;
 
@@ -41,24 +42,24 @@ public class AuthResource {
 	@ApiResponses(value = { 
 		@ApiResponse(responseCode = "200", description = "Login successful, JWT returned", 
 			content = { @Content(mediaType = "application/json", 
-			schema = @Schema(implementation = String.class)) 
+			schema = @Schema(implementation = JwtResponse.class)) 
 		}),
 		@ApiResponse(responseCode = "400", description = "Invalid credentials", 
 			content = @Content)
 	})
 	@PostMapping("/login")
-	public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginEssentials entity) {
+	public ResponseEntity<JwtResponse> login(@RequestBody @Valid LoginEssentials entity) {
         String jwt;
         try {
 			jwt = coordinatorBean.login(entity);
 		} catch (HttpClientErrorException e) {
-			Map<String, String> json = new HashMap<>();
-			json.put("error", e.getMessage());
+			JwtResponse json = new JwtResponse();
+			json.setError(e.getMessage());
 			return new ResponseEntity<>(e.getStatusCode());
 		}
 		
-		Map<String, String> json = new HashMap<>();
-		json.put("token", jwt);
+		JwtResponse json = new JwtResponse();
+		json.setError(jwt);
 		return new ResponseEntity<>(json, HttpStatus.OK);
 	}
 

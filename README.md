@@ -28,3 +28,7 @@ docker compose -d up
 ```
 
 And that's it :)
+
+## OAS
+
+Swagger OpenAPI specification can be found over a following url: `<application base domain>/swagger-ui/index.html`
