@@ -18,13 +18,13 @@ import (
  */
 type APIServer struct {
 	addr string
-    db *gorm.DB
+	db   *gorm.DB
 }
 
 func NewAPIServer(addr string, db *gorm.DB) *APIServer {
 	return &APIServer{
 		addr: addr,
-        db: db,
+		db:   db,
 	}
 }
 
@@ -32,18 +32,18 @@ func NewAPIServer(addr string, db *gorm.DB) *APIServer {
 func (s *APIServer) Run() error {
 	// Creates router_prefix
 	router_prefix := chi.NewRouter()
-    router := chi.NewRouter()
-    router_prefix.Mount("/api/v1", router)
+	router := chi.NewRouter()
+	router_prefix.Mount("/api/v1", router)
 
 	// Register / add endpoints (services), controller == handler
-    imageStore := images.NewStore(s.db) // prepare for dependency injection
-    imagesHandler := images.NewHandler(imageStore) // create the controller and inject the dependency
-    imagesHandler.CreateRoutes(router)
+	imageStore := images.NewStore(s.db)            // prepare for dependency injection
+	imagesHandler := images.NewHandler(imageStore) // create the controller and inject the dependency
+	imagesHandler.CreateRoutes(router)
 
-    // Healthcheck
-    router.Get(config.Healthcheck, health.HealthCheckHandler)
+	// Healthcheck
+	router.Get(config.Healthcheck, health.HealthCheckHandler)
 
-    // For frontend.
+	// For frontend.
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:5173"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE"},
@@ -53,8 +53,8 @@ func (s *APIServer) Run() error {
 	corsHandler := c.Handler(router_prefix)
 
 	log.Printf("API server listening on port %s", s.addr)
-    log.Printf("API endpoint base: %s%s", config.APIVersion, config.Subroute)
-    log.Printf("Healthcheck: %s%s", config.APIVersion, config.Healthcheck)
+	log.Printf("API endpoint base: %s%s", config.APIVersion, config.Subroute)
+	log.Printf("Healthcheck: %s%s", config.APIVersion, config.Healthcheck)
 
 	return http.ListenAndServe(s.addr, corsHandler)
 }

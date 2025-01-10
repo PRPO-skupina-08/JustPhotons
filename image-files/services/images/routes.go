@@ -49,7 +49,7 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 		limit, err = strconv.ParseUint(limit_s, 10, 64)
 		if err != nil {
 			utils.WriteError(w, http.StatusBadRequest, err)
-            return
+			return
 		}
 	}
 
@@ -57,7 +57,7 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 		offset, err = strconv.ParseUint(offset_s, 10, 64)
 		if err != nil {
 			utils.WriteError(w, http.StatusBadRequest, err)
-            return
+			return
 		}
 	}
 
@@ -65,7 +65,7 @@ func (h *Handler) handleGetAllImages(w http.ResponseWriter, r *http.Request) {
 	img, result := h.store.GetAllImages(int(limit), int(offset))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
-        return
+		return
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("No images found! error: %v", result.Error))
 		return
@@ -91,7 +91,7 @@ func (h *Handler) handleGetImage(w http.ResponseWriter, r *http.Request) {
 	img, result := h.store.GetImageById(uint(id))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
-        return
+		return
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
 		return
@@ -153,7 +153,7 @@ func (h *Handler) handlePostImage(w http.ResponseWriter, r *http.Request) {
 	})
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB post result is nil"))
-        return
+		return
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusInternalServerError, result.Error)
 		return
@@ -174,7 +174,7 @@ func (h *Handler) handleDeleteImage(w http.ResponseWriter, r *http.Request) {
 
 	if result := h.store.DeleteImage(uint(id)); result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
-        return
+		return
 	} else if result.Error != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("Image with ID %v doesn't exist. Error: %v", id, result.Error))
 		return

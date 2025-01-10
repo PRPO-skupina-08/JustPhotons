@@ -1,13 +1,13 @@
 package api
 
 import (
+	"image-metadata/cmd/health"
 	"image-metadata/config"
 	"image-metadata/services/metadata"
 	"log"
 	"net/http"
 
 	_ "image-metadata/cmd/docs"
-	"image-metadata/cmd/health"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -36,7 +36,7 @@ func NewAPIServer(addr string, db *gorm.DB) *APIServer {
 //	@version		0.1.0
 //	@description	This is a microservice for managing images' metadata
 
-//	@BasePath	/api/v1
+// @BasePath	/api/v1
 func (s *APIServer) Run() error {
 	// Creates router_prefix
 	router_prefix := chi.NewRouter()
@@ -48,10 +48,10 @@ func (s *APIServer) Run() error {
 	metadataHandler := metadata.NewHandler(metadataStore) // create the controller and inject the dependency
 	metadataHandler.CreateRoutes(router)
 
-    router.Mount(config.Documentation, httpSwagger.WrapHandler)
+	router.Mount(config.Documentation, httpSwagger.WrapHandler)
 
-    // Healthcheck
-    router.Get(config.Healthcheck, health.HealthCheckHandler)
+	// Healthcheck
+	router.Get(config.Healthcheck, health.HealthCheckHandler)
 
 	// For frontend.
 	c := cors.New(cors.Options{
@@ -63,9 +63,9 @@ func (s *APIServer) Run() error {
 	corsHandler := c.Handler(router_prefix)
 
 	log.Printf("API server listening on port %s", s.addr)
-    log.Printf("API endpoint base: %s%s", config.APIVersion, config.Subroute)
-    log.Printf("Documentation (Swagger): %s%s", config.APIVersion, config.Documentation)
-    log.Printf("Healthcheck: %s%s", config.APIVersion, config.Healthcheck)
+	log.Printf("API endpoint base: %s%s", config.APIVersion, config.Subroute)
+	log.Printf("Documentation (Swagger): %s%s", config.APIVersion, config.Documentation)
+	log.Printf("Healthcheck: %s%s", config.APIVersion, config.Healthcheck)
 
 	return http.ListenAndServe(s.addr, corsHandler)
 }

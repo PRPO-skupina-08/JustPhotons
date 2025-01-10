@@ -7,7 +7,7 @@ type MetadataStore interface {
 	GetSpecificPermission(limit int, offset int, orgId uint, userId uint) ([]*Permission, *gorm.DB)
 	InsertPermission(*Permission) (*Permission, *gorm.DB)
 	DeletePermission(uint) *gorm.DB
-	DeleteSpecificPermission(userId uint64, orgId uint64) (*gorm.DB)
+	DeleteSpecificPermission(userId uint64, orgId uint64) *gorm.DB
 }
 
 type Permission struct {

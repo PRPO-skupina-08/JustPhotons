@@ -6,9 +6,8 @@ import (
 	"log"
 )
 
-
 func main() {
-    db, sqlDB := initializers.InitStorage()
+	db, sqlDB := initializers.InitStorage()
 	defer sqlDB.Close()
 
 	// Start API server

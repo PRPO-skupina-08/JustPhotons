@@ -2,8 +2,8 @@ package initializers
 
 import (
 	"database/sql"
-	"permission-check/db"
 	"log"
+	"permission-check/db"
 	"time"
 
 	"gorm.io/gorm"

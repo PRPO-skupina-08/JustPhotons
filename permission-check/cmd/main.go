@@ -1,9 +1,9 @@
 package main
 
 import (
+	"log"
 	"permission-check/cmd/api"
 	"permission-check/cmd/initializers"
-	"log"
 )
 
 func main() {

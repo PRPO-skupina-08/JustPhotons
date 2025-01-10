@@ -25,11 +25,11 @@ func InitStorage() (*gorm.DB, *sql.DB) {
 
 	log.Println("Connected to DB")
 
-    // Setup connection pool
-    sqlDB.SetMaxIdleConns(10)
-    sqlDB.SetMaxOpenConns(20) // 100
-    sqlDB.SetConnMaxIdleTime(time.Minute)
-    sqlDB.SetConnMaxLifetime(time.Hour)
+	// Setup connection pool
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(20) // 100
+	sqlDB.SetConnMaxIdleTime(time.Minute)
+	sqlDB.SetConnMaxLifetime(time.Hour)
 
-    return dbConn, sqlDB
+	return dbConn, sqlDB
 }
