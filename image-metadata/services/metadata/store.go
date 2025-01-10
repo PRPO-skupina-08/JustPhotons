@@ -21,18 +21,13 @@ func (s *Store) GetMetadataById(id uint) (md types.Metadata, result *gorm.DB) {
 	return
 }
 
-func (s *Store) GetAllMetadata(limit int, offset int, order *string, imgID uint, rating uint) (md []*types.Metadata, result *gorm.DB) {
+func (s *Store) GetAllMetadata(limit int, offset int, order *string, imgId uint, rating uint, albumId uint) (md []*types.Metadata, result *gorm.DB) {
 	result = s.db.Limit(limit).Offset(offset)
+	result = result.Where(&types.Metadata{ImageId: imgId, Rating: rating, AlbumId: albumId})
 	if order != nil {
 		if len(*order) > 0 {
 			result = result.Order(order)
 		}
-	}
-	if imgID > 0 {
-		result = result.Where(&types.Metadata{ImageId: imgID, Rating: rating})
-	}
-	if rating > 0 {
-		result = result.Where(&types.Metadata{ImageId: imgID, Rating: rating})
 	}
 	result.Find(&md)
 	return

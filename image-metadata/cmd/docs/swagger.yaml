@@ -2,6 +2,8 @@ basePath: /api/v1
 definitions:
   types.InsertMetadataPayload:
     properties:
+      album_id:
+        type: integer
       image_id:
         type: integer
       rating:
@@ -9,6 +11,8 @@ definitions:
     type: object
   types.Metadata:
     properties:
+      albumId:
+        type: integer
       imageId:
         description: |-
           ImageRef uint
@@ -33,10 +37,15 @@ paths:
         in: query
         name: image_id
         type: integer
-      - description: Image rating, between 0 and 5 (inclusive)
+      - description: Image rating, between 1 and 5 (inclusive)
         example: 4
         in: query
         name: rating
+        type: integer
+      - description: Image ID
+        example: 4
+        in: query
+        name: album_id
         type: integer
       produces:
       - application/json
@@ -82,12 +91,17 @@ paths:
         in: query
         name: image_id
         type: integer
-      - description: Image rating, between 0 and 5 (inclusive)
+      - description: Image rating, between 1 and 5 (inclusive)
         example: 4
         in: query
         maximum: 5
         minimum: 0
         name: rating
+        type: integer
+      - description: The ID of the album to which the image belongs
+        example: 42
+        in: query
+        name: album_id
         type: integer
       produces:
       - application/json

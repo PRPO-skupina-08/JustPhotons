@@ -59,8 +59,15 @@ const docTemplate = `{
                         "minimum": 0,
                         "type": "integer",
                         "example": 4,
-                        "description": "Image rating, between 0 and 5 (inclusive)",
+                        "description": "Image rating, between 1 and 5 (inclusive)",
                         "name": "rating",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 42,
+                        "description": "The ID of the album to which the image belongs",
+                        "name": "album_id",
                         "in": "query"
                     }
                 ],
@@ -145,8 +152,15 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "example": 4,
-                        "description": "Image rating, between 0 and 5 (inclusive)",
+                        "description": "Image rating, between 1 and 5 (inclusive)",
                         "name": "rating",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 4,
+                        "description": "Image ID",
+                        "name": "album_id",
                         "in": "query"
                     }
                 ],
@@ -253,6 +267,9 @@ const docTemplate = `{
         "types.InsertMetadataPayload": {
             "type": "object",
             "properties": {
+                "album_id": {
+                    "type": "integer"
+                },
                 "image_id": {
                     "type": "integer"
                 },
@@ -264,6 +281,9 @@ const docTemplate = `{
         "types.Metadata": {
             "type": "object",
             "properties": {
+                "albumId": {
+                    "type": "integer"
+                },
                 "imageId": {
                     "description": "ImageRef uint\nImage    Image ` + "`" + `gorm:\"foreignKey:ImageRef\"` + "`" + `",
                     "type": "integer"

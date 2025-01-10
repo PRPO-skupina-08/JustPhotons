@@ -12,7 +12,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-    _ "image-metadata/cmd/docs"
+	_ "image-metadata/cmd/docs"
 )
 
 type SortToken struct {
@@ -87,7 +87,8 @@ func (h *Handler) handleGetMetadata(w http.ResponseWriter, r *http.Request) {
 //	@Param			offset		query		uint			false	"Amount of entries left out at the start. To be used with `limit` in order to achieve pagination."							example(10)
 //	@Param			sort		query		string			false	"SQL sorting in with pattern `<field>:<order>[,]...`, first pattern does primary sort, second pattern secondary sort etc."	example(rating:asc,image_id:desc)
 //	@Param			image_id	query		uint			false	"The ID of the image to which the metadata entry belongs."																	example(42)
-//	@Param			rating		query		uint			false	"Image rating, between 0 and 5 (inclusive)"																					example(4)	minimum(0)	maximum(5)
+//	@Param			rating		query		uint			false	"Image rating, between 1 and 5 (inclusive)"																					example(4)	minimum(0)	maximum(5)
+//	@Param			album_id	query		uint			false	"The ID of the album to which the image belongs"																			example(42)
 //	@Success		200			{object}	types.Metadata	"Matching entry"
 //	@Failure		400			{object}	error			"Incorrect input"
 //	@Failure		404			{object}	error			"No results"
@@ -99,7 +100,7 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
-    // TODO: do this with the validate library.
+	// TODO: do this with the validate library.
 	if limit <= 0 {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Limit cannot be 0!"))
 		return
@@ -117,7 +118,7 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imageID, err := getURLQuery(r, "image_id", parseUintWrapper(), 0)
+	imageId, err := getURLQuery(r, "image_id", parseUintWrapper(), 0)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
@@ -129,8 +130,14 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	albumId, err := getURLQuery(r, "album_id", parseUintWrapper(), 0)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
 	// check if image exists
-	md, result := h.store.GetAllMetadata(int(limit), int(offset), orderBy, uint(imageID), uint(rating))
+	md, result := h.store.GetAllMetadata(int(limit), int(offset), orderBy, uint(imageId), uint(rating), uint(albumId))
 	if result == nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("Internal server error: DB query result is nil"))
 		return
@@ -149,7 +156,7 @@ func (h *Handler) handleGetAllMetadata(w http.ResponseWriter, r *http.Request) {
 //	@Tags			metadata
 //	@Accept			json
 //	@Produce		json
-//	@Param			metadata	body		types.InsertMetadataPayload	true	"Insert metadata payload"	example({ "image_id": 42, "rating": 4 })
+//	@Param			metadata	body		types.InsertMetadataPayload	true	"Insert metadata payload"	example({ "image_id": 42, "rating": 4, "album_id": 2 })
 //	@Success		201			{object}	types.Metadata				"Successfully created new entry"
 //	@Failure		400			{object}	error						"Incorrect input (missing fields, incorrect data etc.)"
 //	@Failure		500			{object}	error						"Internal server error, but can be caused by database rejecting wrong data (would be a developer's mistake)."
@@ -162,29 +169,25 @@ func (h *Handler) handlePostMetadata(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if payload.Rating < 0 || 5 < payload.Rating {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Incorrect rating field! Must be between 0 and 5"))
+	if payload.Rating < 1 || 5 < payload.Rating {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Incorrect rating field! Must be between 1 and 5"))
 		return
 	}
 
-	if payload.ImageId == 0 {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("Empty filename field!"))
+	if payload.ImageId <= 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("image_id is 0! Perhaps it's missing?"))
 		return
 	}
 
-	/**
-	* This is just a debug function - it creates a test_image.{jpg, png ...} file to
-	* check if bytes were written correctly.
-	 */
-	/*
-	   if os.WriteFile("test_image"+strings.ToLower(path.Ext(payload.Filename)), imageData, 0644) != nil {
-	       log.Printf("Error writing file '%s': %v\n", payload.Filename, err)
-	   }
-	*/
+	if payload.AlbumId <= 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("album_id is 0! Perhaps it's missing?"))
+		return
+	}
 
-	// create new image
+	// create new metadata
 	md, result := h.store.InsertMetadata(&types.Metadata{
 		ImageId: payload.ImageId,
+		AlbumId: payload.AlbumId,
 		Rating:  payload.Rating,
 	})
 	if result == nil {
@@ -238,7 +241,8 @@ func (h *Handler) handleDeleteMetadata(w http.ResponseWriter, r *http.Request) {
 //	@Tags			metadata
 //	@Produce		json
 //	@Param			image_id	query		uint	false	"Image ID (not the metadata entry's ID)"	example(42)
-//	@Param			rating		query		uint	false	"Image rating, between 0 and 5 (inclusive)"	example(4)
+//	@Param			rating		query		uint	false	"Image rating, between 1 and 5 (inclusive)"	example(4)
+//	@Param			album_id	query		uint	false	"Image ID"									example(4)
 //	@Success		204			{object}	nil		"Sucessfully deleted"
 //	@Failure		400			{object}	error	"Incorrect input"
 //	@Failure		400			{object}	error	"Neither `image_id` nor `rating` specified, but at least one is needed"
@@ -248,13 +252,13 @@ func (h *Handler) handleDeleteMetadata(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleDeleteSpecificMetadata(w http.ResponseWriter, r *http.Request) {
 	var whereClauses []string = make([]string, 0)
 
-	imageID, err := getURLQuery(r, "image_id", parseUintWrapper(), 0)
+	imageId, err := getURLQuery(r, "image_id", parseUintWrapper(), 0)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
-	if imageID != 0 {
-		whereClauses = append(whereClauses, "image_id = "+strconv.FormatUint(imageID, 10))
+	if imageId != 0 {
+		whereClauses = append(whereClauses, "image_id = "+strconv.FormatUint(imageId, 10))
 	}
 
 	rating, err := getURLQuery(r, "rating", parseUintWrapper(), 0)
@@ -264,6 +268,15 @@ func (h *Handler) handleDeleteSpecificMetadata(w http.ResponseWriter, r *http.Re
 	}
 	if rating != 0 {
 		whereClauses = append(whereClauses, "rating = "+strconv.FormatUint(rating, 10))
+	}
+
+	albumId, err := getURLQuery(r, "album_id", parseUintWrapper(), 0)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+	if albumId != 0 {
+		whereClauses = append(whereClauses, "album_id = "+strconv.FormatUint(albumId, 10))
 	}
 
 	if len(whereClauses) <= 0 {

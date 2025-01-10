@@ -15,7 +15,7 @@ import (
 
 type mockMetadataStore struct{}
 
-func (m *mockMetadataStore) GetAllMetadata(limit int, offset int, order *string, imgID uint, rating uint) (img []*types.Metadata, result *gorm.DB) {
+func (m *mockMetadataStore) GetAllMetadata(limit int, offset int, order *string, imgId uint, rating uint, albumId uint) (img []*types.Metadata, result *gorm.DB) {
 	result = &gorm.DB{}
 	return
 }
