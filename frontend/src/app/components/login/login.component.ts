@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router'
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 interface LoginFormModel {
   email: string;
@@ -11,13 +12,14 @@ interface LoginFormModel {
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
   protected email: string = "";
   protected password : string = "";
+  protected errorMessage: string = "";
 
   constructor(
     private router: Router,
@@ -30,6 +32,8 @@ export class LoginComponent {
     if (!this.email || !this.password) {
       return;
     }
+
+    this.errorMessage = "";
 
     const credentials: LoginFormModel = {
       email: this.email,
@@ -46,9 +50,9 @@ export class LoginComponent {
           const navigateTo = this.route.snapshot.queryParams['returnUrl'] || '/';
           this.router.navigateByUrl(navigateTo);
         },
-        error: (error) => {
+        error: (error : Error) => {
           // TODO: handle error, maybe show the message?
-
+          this.errorMessage = error.message;
           console.log('login failed', error);
         },
       });

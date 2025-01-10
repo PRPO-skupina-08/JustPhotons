@@ -1,10 +1,14 @@
 package si.justphotons.coordinator.entities.external;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 
 public class LoginEssentials {
 
+	@Email(message = "valid email please")
     private String email;
 
+	@Size(min = 8, max = 64, message = "password should be between 8 and 64 characters long")
     private String password;
 
 	public String getEmail() {

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../enviroments/enviroment';
 import { HttpClient } from '@angular/common/http';
@@ -45,6 +45,10 @@ export class AuthService {
         const token = response.token;
         this.setToken(token);
         return token;
+      }),
+      catchError((error) => {
+        console.error('Error occurred:', error);
+        return throwError(() => new Error('Neuspešna prijava.'));
       })
     );
   }
