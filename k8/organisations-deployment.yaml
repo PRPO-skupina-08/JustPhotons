@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: organisations
+  name: organisations
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: organisations
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: organisations
+    spec:
+      containers:
+        - env:
+            - name: DATABASE_URL
+              value: mariadb://db:3306/justphotons
+          image: organisations
+          name: organisations
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+              protocol: TCP
+      restartPolicy: Always
