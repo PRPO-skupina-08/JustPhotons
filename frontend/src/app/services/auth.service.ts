@@ -56,9 +56,9 @@ export class AuthService {
   register(userData: RegisterRequest): Observable<string> {
     let url : string = `${environment.apiUrl}/register`
 
-    return this.http.post<string>(url, userData).pipe(
+    return this.http.post<JwtJson>(url, userData).pipe(
       map((response) => {
-        const token = response;
+        const token = response.token;
         this.setToken(token);
         return token;
       })
