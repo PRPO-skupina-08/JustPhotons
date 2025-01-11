@@ -3,6 +3,7 @@ import { OrganisationButtonComponent } from '../organisation-button/organisation
 import { OrganisationEssentials } from '../../classes/organisation-essentials'
 import { CommonModule } from '@angular/common';
 import { OrganisatoinsService } from '../../services/organisatoins.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,29 +14,17 @@ import { OrganisatoinsService } from '../../services/organisatoins.service';
 })
 export class SidebarComponent implements OnInit {
   constructor(
-    private readonly organisationsService: OrganisatoinsService
+    private readonly organisationsService: OrganisatoinsService,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.getAllOrganisations();
+    if (this.authService.isLoggedIn()) {
+      this.getAllOrganisations();
+    }
   }
 
   protected organisations : OrganisationEssentials[] = [];
-  // = 
-  // [
-  //   {
-  //     id: 1,
-  //     name: 'Mladi SDS',
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Skavti Ljubljana',
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Skavti Murska Sobota',
-  //   }
-  // ]
 
   protected getAllOrganisations() {
     this.organisationsService.getAllOrganisations().subscribe({
