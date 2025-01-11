@@ -24,9 +24,9 @@ spec:
         - env:
             - name: DATABASE_URL
               value: mariadb://db:3306/justphotons
-          image: users
+          image: banana4242/users:latest
           name: users
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
               protocol: TCP

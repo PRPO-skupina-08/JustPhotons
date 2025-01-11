@@ -24,9 +24,9 @@ spec:
         - env:
             - name: DATABASE_URL
               value: mariadb://db:3306/justphotons
-          image: organisations
+          image: banana4242/organisations:latest
           name: organisations
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8082
               protocol: TCP

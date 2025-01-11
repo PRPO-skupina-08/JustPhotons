@@ -8,6 +8,7 @@ metadata:
     io.kompose.service: permission-check
   name: permission-check
 spec:
+  type: NodePort
   ports:
     - name: "8085"
       port: 8085

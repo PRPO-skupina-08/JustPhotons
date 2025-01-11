@@ -21,9 +21,9 @@ spec:
         io.kompose.service: frontend
     spec:
       containers:
-        - image: frontend
+        - image: banana4242/frontend:latest
           name: frontend
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
               protocol: TCP
