@@ -1,5 +1,5 @@
 export const environment = {
-    apiUrl: 'http://coordinator:8080/api/v1',
+    apiUrl: 'http://57.153.83.62/api/v1',
     production: false,
   };
   
