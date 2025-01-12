@@ -35,6 +35,14 @@ spec:
           image: banana4242/image-metadata:latest
           name: image-metadata
           imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            failureThreshold: 2
+            successThreshold: 1
           ports:
             - containerPort: 8080
               protocol: TCP
