@@ -14,6 +14,13 @@ spec:
               name: coordinator
               port: 
                 number: 8080
+        - path: /swagger-ui
+          pathType: Prefix
+          backend: 
+            service: 
+              name: coordinator
+              port: 
+                number: 8080
         - path: /
           pathType: Prefix
           backend: 
