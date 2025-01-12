@@ -1,0 +1,15 @@
+.organisation-button {
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    border-color: var(--on-primary);
+    border: 0;
+    text-align: center;
+    background-color: var(--primary);
+    color: var(--on-primary);
+    margin-top: 10px;
+}
+
+.organisation-button:hover {
+    background-color: var(--primary-variant);
+}

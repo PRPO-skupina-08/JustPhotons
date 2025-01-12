@@ -1,0 +1,21 @@
+:root {
+    --sidebar-width: 200px;
+
+    /* color schemas */
+
+    --primary: #2F231F;
+    --primary-variant: #3D2C20;
+    --secondary: #654839;
+
+    --bg-darkest: #989796;
+    --bg-dark: #B9B9B9;
+    --bg-neutral: #DDDDDD;
+    --bg-light: #EEEEEE;
+
+    --on-primary: #DDDDDD;
+}
+
+body {
+    margin: 0;
+    background-color: var(--bg-light);
+}

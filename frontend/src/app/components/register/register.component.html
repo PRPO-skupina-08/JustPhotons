@@ -1,0 +1,10 @@
+<div>
+    <input [(ngModel)]="email" type="email" placeholder="email">
+    <input [(ngModel)]="username" type="text" placeholder="username">
+    <input [(ngModel)]="password1" type="password" placeholder="password">
+    <input [(ngModel)]="password2" type="password" placeholder="repeat password">
+    <button (click)="onSubmit()">REGISTRIRAJ SE</button>
+    <div *ngIf="errorMessage" class="error-message">
+        <p> {{errorMessage}} </p>
+    </div>
+</div>

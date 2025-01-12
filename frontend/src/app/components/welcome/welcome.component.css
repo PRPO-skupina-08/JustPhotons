@@ -1,0 +1,9 @@
+.wrapper {
+    min-height: 100vw;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+h1 {
+    text-align: center;
+}

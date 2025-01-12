@@ -1,0 +1,8 @@
+<div class="sidebar">
+    <h1>Just Photons</h1>
+    <h3><i>your shots - organised</i></h3>
+    <div *ngFor="let organisation of organisations">
+        <app-organisation-button [organisation]="organisation"></app-organisation-button>
+    </div>
+</div>
+

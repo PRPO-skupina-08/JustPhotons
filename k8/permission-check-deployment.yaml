@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: permission-check
+  name: permission-check
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: permission-check
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: permission-check
+    spec:
+      containers:
+        - env:
+            - name: DB_ADDRESS
+              value: db
+            - name: DB_NAME
+              value: justphotons
+            - name: DB_PASSWORD
+              value: "1234567890"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: root
+          image: banana4242/permission-check:latest
+          name: permission-check
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always

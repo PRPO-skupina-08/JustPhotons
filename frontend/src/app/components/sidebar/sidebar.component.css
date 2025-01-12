@@ -1,0 +1,21 @@
+.sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    padding: 10px;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    /* border-right: 1px solid black; */
+    background-color: var(--bg-darkest);
+}
+
+h1 {
+    margin-bottom: 0;
+    text-align: center;
+}
+
+h3 {
+    margin-top: 5px;
+    color: #555555;
+    text-align: center;
+}
