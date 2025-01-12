@@ -11,13 +11,13 @@ jobs:
     strategy:
       matrix:
         image:
-          - banana4242/frontend
-          - banana4242/coordinator
-          - banana4242/users
-          - banana4242/image-files
-          - banana4242/image-metadata
-          - banana4242/permission-check
-          - banana4242/organisations
+          - frontend
+          - coordinator
+          - users
+          - image-files
+          - image-metadata
+          - permission-check
+          - organisations
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -32,12 +32,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ matrix.image }}
+          images: banana4242/${{ matrix.image }}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./${{ matrix.image.split('/')[-1] }}
+          context: ./${{ matrix.image }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
