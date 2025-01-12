@@ -36,9 +36,17 @@ spec:
             value: http://permission-check:8080/api/v1/permissions
           - name: USERS_URL
             value: http://users:8081/v1
-          image: banana4242/coordinator:latest
+          image: banana4242/coordinator:master
           name: coordinator
           imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 2
+            successThreshold: 1
           ports:
             - containerPort: 8080
               protocol: TCP

@@ -32,7 +32,7 @@ spec:
               value: "3306"
             - name: DB_USER
               value: root
-          image: banana4242/permission-check:latest
+          image: banana4242/permission-check:master
           name: permission-check
           imagePullPolicy: Always
           ports:

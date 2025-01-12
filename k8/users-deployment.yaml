@@ -24,7 +24,7 @@ spec:
         - env:
             - name: DATABASE_URL
               value: mariadb://db:3306/justphotons
-          image: banana4242/users:latest
+          image: banana4242/users:master
           name: users
           imagePullPolicy: Always
           ports:
