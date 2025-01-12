@@ -42,12 +42,4 @@ spec:
           ports:
             - containerPort: 8080
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            failureThreshold: 2
-            successThreshold: 1
       restartPolicy: Always
