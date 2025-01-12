@@ -5,12 +5,12 @@ metadata:
     kompose.cmd: kompose convert
     kompose.version: 1.35.0 (9532ceef3)
   labels:
-    io.kompose.service: db
-  name: db
+    io.kompose.service: coordinator
+  name: coordinator
 spec:
   ports:
-    - name: "3306"
-      port: 3306
-      targetPort: 3306
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
   selector:
-    io.kompose.service: db
+    io.kompose.service: coordinator
