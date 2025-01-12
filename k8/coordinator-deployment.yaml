@@ -39,14 +39,6 @@ spec:
           image: banana4242/coordinator:master
           name: coordinator
           imagePullPolicy: Always
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 9000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            failureThreshold: 2
-            successThreshold: 1
           ports:
             - containerPort: 8080
               protocol: TCP
