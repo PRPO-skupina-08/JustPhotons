@@ -44,10 +44,10 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuatr/health
               port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            initialDelaySeconds: 15
+            periodSeconds: 30
             failureThreshold: 2
             successThreshold: 1
       restartPolicy: Always
