@@ -8,7 +8,7 @@ docker build -t organisations .
 docker run -p 8082:8082 organisations
 ```
 
-## API endpoints
+## API endpoints (/v1 +)
 
 ### /organisations
 

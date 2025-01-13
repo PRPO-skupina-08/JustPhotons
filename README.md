@@ -32,12 +32,14 @@ Each Go microservice directory is structured in following way:
 
 ## Deployment
 
-### Prerequisites
+### How to deploy with docker 
+
+#### Prerequisites
 
 - docker installed on your machine
 - a lot of patience for debugging our non-working code :)
 
-### How to deploy?
+#### Deployment
 
 In a root folder execute:
 ```
@@ -45,6 +47,33 @@ docker compose -d up
 ```
 
 And that's it :)
+
+### How to deploy with kubernetes
+
+#### Prerequisites
+
+- kubernetes and kubectl installed on your machine (or on a public cloud)
+- even more patience for debugging kubernetes :)
+
+#### Deployment
+
+first execute:
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml
+``` 
+for adding an ingress controller.
+
+```
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+for adding a metrics-server (if you don't already have one)
+
+and finally you move to `/k8` folder and execute
+```
+kubectl apply -f .
+```
+
+that should be it :)
 
 ## OAS
 
